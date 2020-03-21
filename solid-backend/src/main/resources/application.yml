@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: create-drop
+    generateDdl: true
+    show-sql: true
+    databasePlatform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/solid
+    username: ${pguser}
+    password: ${pgpasswd}
+    driver-class: org.postgresql.Driver
