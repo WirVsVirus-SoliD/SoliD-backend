@@ -1,11 +1,11 @@
-package de.mlbw.ethbalance.rest.controller;
+package de.wirvsvirus.hack.rest.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.mlbw.ethbalance.api.model.ProviderModel;
+import de.wirvsvirus.hack.api.model.ProviderModel;
 import io.swagger.annotations.ApiOperation;
 
 @RestController

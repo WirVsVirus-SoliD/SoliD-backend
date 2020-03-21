@@ -1,4 +1,4 @@
-package de.mlbw.ethbalance.backend.dao;
+package de.wirvsvirus.hack.backend.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

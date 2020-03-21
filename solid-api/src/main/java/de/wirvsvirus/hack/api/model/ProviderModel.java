@@ -1,4 +1,4 @@
-package de.mlbw.ethbalance.api.model;
+package de.wirvsvirus.hack.api.model;
 
 import lombok.Builder;
 import lombok.Data;

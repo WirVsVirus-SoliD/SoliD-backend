@@ -1,4 +1,4 @@
-package de.mlbw.ethbalance.backend.dao;
+package de.wirvsvirus.hack.backend.dao;
 
 import java.util.Date;
 
@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.mlbw.ethbalance.backend.dao.repository.PrePersistListener;
+import de.wirvsvirus.hack.backend.dao.repository.PrePersistListener;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,8 +1,8 @@
-package de.mlbw.ethbalance.backend.dao.repository;
+package de.wirvsvirus.hack.backend.dao.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.mlbw.ethbalance.backend.dao.Provider;
+import de.wirvsvirus.hack.backend.dao.Provider;
 
 public interface ProviderRepository extends JpaRepository<Provider, Integer> {
 

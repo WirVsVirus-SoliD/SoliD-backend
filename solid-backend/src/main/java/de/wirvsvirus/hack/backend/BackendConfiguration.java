@@ -1,4 +1,4 @@
-package de.mlbw.ethbalance.backend;
+package de.wirvsvirus.hack.backend;
 
 import javax.sql.DataSource;
 
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 
-import de.mlbw.ethbalance.backend.dao.AbstractEntity;
-import de.mlbw.ethbalance.backend.dao.repository.ProviderRepository;
+import de.wirvsvirus.hack.backend.dao.AbstractEntity;
+import de.wirvsvirus.hack.backend.dao.repository.ProviderRepository;
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses = {ProviderRepository.class})

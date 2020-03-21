@@ -1,12 +1,12 @@
-package de.mlbw.ethbalance.application;
+package de.wirvsvirus.hack.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-import de.mlbw.ethbalance.backend.BackendConfiguration;
-import de.mlbw.ethbalance.rest.RestConfiguration;
+import de.wirvsvirus.hack.backend.BackendConfiguration;
+import de.wirvsvirus.hack.rest.RestConfiguration;
 
 @SpringBootApplication
 @EnableAutoConfiguration

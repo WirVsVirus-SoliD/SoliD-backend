@@ -1,4 +1,4 @@
-package de.mlbw.ethbalance.backend.dao.repository;
+package de.wirvsvirus.hack.backend.dao.repository;
 
 import java.util.Date;
 
@@ -7,7 +7,7 @@ import javax.persistence.PreUpdate;
 
 import org.springframework.util.StringUtils;
 
-import de.mlbw.ethbalance.backend.dao.AbstractEntity;
+import de.wirvsvirus.hack.backend.dao.AbstractEntity;
 
 public class PrePersistListener
 {

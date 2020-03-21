@@ -1,4 +1,4 @@
-package de.mlbw.ethbalance.rest;
+package de.wirvsvirus.hack.rest;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
