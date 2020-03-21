@@ -31,4 +31,4 @@ steps:
     tagSource: manual
     tag: '$(Build.BuildNumber)'     
     assets: |
-         $(Build.ArtifactStagingDirectory)/*.jar
+         **/*.jar
