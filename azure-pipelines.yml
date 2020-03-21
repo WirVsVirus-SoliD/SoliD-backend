@@ -4,8 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- master
-- releases/*
+  branches:
+    include:
+      - refs/tags/{tagname}
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -30,4 +31,4 @@ steps:
     tagSource: manual
     tag: '$(Build.BuildNumber)'     
     assets: |
-         $(Build.ArtifactStagingDirectory)/target/*.jar
+         $(Build.ArtifactStagingDirectory)/*.jar
