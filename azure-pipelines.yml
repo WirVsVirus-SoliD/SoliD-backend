@@ -29,6 +29,6 @@ steps:
     gitHubConnection: github.com_serapas
     repositoryName: '$(Build.Repository.Name)'
     tagSource: manual
-    tag: '$(Build.BuildNumber)'     
+    tag: '$(tagName)'     
     assets: |
          **/*.jar
