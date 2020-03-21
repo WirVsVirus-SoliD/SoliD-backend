@@ -25,9 +25,9 @@ steps:
 - task: GithubRelease@0 
   displayName: 'Create GitHub Release'      
   inputs:
-    gitHubConnection: WirVsVirus-SoliD 
-    repositoryName: WirVsVirus-SoliD/SoliD-backend
+    gitHubConnection:
+    repositoryName: '$(Build.Repository.Name)'
     tagSource: manual
-    tag: $(Build.BuildNumber)      
+    tag: '$(Build.BuildNumber)'     
     assets: |
          $(Build.ArtifactStagingDirectory)/target/*.jar
