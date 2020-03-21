@@ -25,7 +25,7 @@ steps:
 - task: GithubRelease@0 
   displayName: 'Create GitHub Release'      
   inputs:
-    gitHubConnection: WirVsVirus-SoliD
+    gitHubConnection: github.com_serapas
     repositoryName: '$(Build.Repository.Name)'
     tagSource: manual
     tag: '$(Build.BuildNumber)'     
