@@ -21,3 +21,13 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
+
+- task: GithubRelease@0 
+  displayName: 'Create GitHub Release'      
+  inputs:
+    gitHubConnection: WirVsVirus-SoliD 
+    repositoryName: WirVsVirus-SoliD/SoliD-backend
+    tagSource: manual
+    tag: $(Build.BuildNumber)      
+    assets: |
+         $(Build.ArtifactStagingDirectory)/target/*.jar
