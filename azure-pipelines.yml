@@ -27,8 +27,6 @@ steps:
   displayName: 'Create GitHub Release'      
   inputs:
     gitHubConnection: github.com_serapas
-    repositoryName: '$(Build.Repository.Name)'
-    tagSource: manual
-    tag: '$(tagName)'     
+    repositoryName: '$(Build.Repository.Name)'  
     assets: |
          **/*.jar
