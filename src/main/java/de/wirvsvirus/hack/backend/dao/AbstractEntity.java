@@ -22,6 +22,8 @@ import lombok.Setter;
 public class AbstractEntity {
 	public static final String SYSTEM_USER = "SYSTEM";
 
+	public static final String SOLID_MANDATOR = "soliD";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column()

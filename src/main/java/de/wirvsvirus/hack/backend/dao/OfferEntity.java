@@ -2,6 +2,7 @@ package de.wirvsvirus.hack.backend.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -13,21 +14,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "provider")
+@Table(name = "solid_offers")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Provider extends AbstractEntity {
+public class OfferEntity extends AbstractEntity {
+
+	@ManyToOne
+	private UserEntity user;
+
+	@ManyToOne
+	private ProviderEntity provider;
 
 	@Column
-	private String name;
-
-	@Column
-	private String contactFirstName;
-
-	@Column
-	private String contactLastName;
-
-	@Column
-	private String email;
+	private boolean contacted;
 }

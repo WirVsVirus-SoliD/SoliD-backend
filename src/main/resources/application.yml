@@ -11,3 +11,7 @@ spring:
     username: ${pguser}
     password: ${pgpasswd}
     driver-class: org.postgresql.Driver
+appConfig: 
+    restEndpoint: https://geocode.xyz/{ADR}?geoit=json&auth=${geocodeKey}
+    timeout: 60
+ 
