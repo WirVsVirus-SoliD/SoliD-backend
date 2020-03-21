@@ -4,8 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- master
-- releases/*
+  tags:
+    include:
+    - v*.*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -21,3 +22,11 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
+
+- task: GithubRelease@0 
+  displayName: 'Create GitHub Release'      
+  inputs:
+    gitHubConnection: github.com_serapas
+    repositoryName: '$(Build.Repository.Name)'  
+    assets: |
+         **/*.jar
