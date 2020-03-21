@@ -1,4 +1,4 @@
-package de.wirvsvirus.hack.api.model;
+package de.wirvsvirus.hack.rest.model;
 
 import lombok.Builder;
 import lombok.Data;

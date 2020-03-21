@@ -7,3 +7,4 @@ target/
 .class
 .prefs
 *.class
+/bin/

@@ -3,8 +3,8 @@ package de.wirvsvirus.hack.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.wirvsvirus.hack.api.model.ProviderModel;
 import de.wirvsvirus.hack.backend.dao.repository.ProviderRepository;
+import de.wirvsvirus.hack.rest.model.ProviderModel;
 
 @Service
 public class ProviderService {

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.wirvsvirus.hack.api.model.ProviderModel;
+import de.wirvsvirus.hack.rest.model.ProviderModel;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
