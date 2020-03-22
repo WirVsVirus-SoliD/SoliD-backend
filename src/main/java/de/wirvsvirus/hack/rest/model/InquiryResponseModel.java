@@ -12,7 +12,7 @@ import lombok.Data;
 @Builder
 public class InquiryResponseModel {
 
-	private int offerId;
+	private int inquiryId;
 
 	private HelperResponseModel helper;
 
@@ -23,7 +23,7 @@ public class InquiryResponseModel {
 	public static InquiryResponseModel fromEntity(InquireEntity entity) {
 		InquiryResponseModel model = InquiryResponseModel.builder().build();
 		BeanUtils.copyProperties(entity, model);
-		model.setOfferId(entity.getT_id());
+		model.setInquiryId(entity.getT_id());
 		model.setApplyDate(entity.getT_dateCreated());
 		model.setHelper(HelperResponseModel.fromEntity(entity.getHelper()));
 		return model;

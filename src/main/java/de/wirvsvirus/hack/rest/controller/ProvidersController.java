@@ -153,7 +153,7 @@ public class ProvidersController {
 	}
 
 	@ApiOperation(value = "download a provider picture")
-	@GetMapping("/{providerId}/download-picture/")
+	@GetMapping("/{providerId}/download-picture")
 	@Transactional
 	public ResponseEntity<org.springframework.core.io.Resource> downloadFile(
 			@PathVariable("providerId") int providerId) {
