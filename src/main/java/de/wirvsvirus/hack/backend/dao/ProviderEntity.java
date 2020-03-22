@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,8 +24,17 @@ import lombok.Setter;
 public class ProviderEntity extends AbstractEntity {
 
 	@Column
-
 	private String farmName;
+
+	@Column
+	@Lob
+	private byte[] picture;
+
+	@Column
+	private String pictureName;
+
+	@Column
+	private String pictureContentType;
 
 	@Column
 	private String contactFirstName;

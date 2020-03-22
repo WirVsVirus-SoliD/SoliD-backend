@@ -1,19 +1,28 @@
 package de.wirvsvirus.hack.rest.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.google.gson.Gson;
@@ -53,6 +62,14 @@ public class ProvidersController {
 		return ProviderModel.fromEntity(pe);
 	}
 
+	@ApiOperation(value = "get provider for given lat, long and radius")
+	@RequestMapping(path = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ProviderModel getProvidersInRange(@RequestParam float latitude,
+			@RequestParam float longitute, @RequestParam float radius) {
+		ProviderEntity pe = getProviderEntity(0);
+		return ProviderModel.fromEntity(pe);
+	}
+
 	@ApiOperation(value = "delete provider with given id")
 	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = MediaType.TEXT_PLAIN_VALUE)
 	public String deleteProvider(@PathVariable("id") int providerId) {
@@ -67,6 +84,39 @@ public class ProvidersController {
 		ProviderModel providerModel = ProviderModel
 				.fromRegisterModel(registerModel);
 		return insertOrUpdate(providerModel);
+	}
+
+	@ApiOperation(value = "upload a provider picture")
+	@RequestMapping(path = "/{id}/upload-file", method = RequestMethod.POST)
+	@Transactional
+	public ResponseEntity<String> uploadPicture(
+			@PathVariable("id") int providerId,
+			@RequestParam("file") MultipartFile file) {
+		ProviderEntity entity = this.providerRepository.getOne(providerId);
+		try {
+			entity.setPicture(file.getBytes());
+			entity.setPictureName(file.getName());
+			entity.setPictureContentType(file.getContentType());
+			this.providerRepository.save(entity);
+			return ResponseEntity.ok().body("upload ok");
+		} catch (IOException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@ApiOperation(value = "download a provider picture")
+	@GetMapping("/{id}/download-file/")
+	@Transactional
+	public ResponseEntity<org.springframework.core.io.Resource> downloadFile(
+			@PathVariable("id") int providerId) {
+		ProviderEntity entity = this.providerRepository.getOne(providerId);
+		return ResponseEntity.ok()
+				.contentType(MediaType
+						.parseMediaType(entity.getPictureContentType()))
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						"attachment; filename=\"" + entity.getPictureName()
+								+ "\"")
+				.body(new ByteArrayResource(entity.getPicture()));
 	}
 
 	@ApiOperation(value = "get all offers for given provider")
