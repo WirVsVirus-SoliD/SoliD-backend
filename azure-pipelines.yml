@@ -1,32 +1,82 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
-  tags:
-    include:
-    - v*.*
+  branches:
+     include:
+     - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+- stage: app
+  jobs:
+    - job: app
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          mavenOptions: '-Xmx3072m'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.8'
+          jdkArchitectureOption: 'x64'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          goals: 'package'
+      - task: GithubRelease@0 
+        displayName: 'Remove GitHub old release'
+        continueOnError: true      
+        inputs:
+          gitHubConnection: github.com_serapas
+          repositoryName: '$(Build.Repository.Name)'  
+          action: delete
+          tagSource: manual
+          tag: production
+      - task: GithubRelease@0 
+        displayName: 'Create GitHub Release'      
+        inputs:
+          gitHubConnection: github.com_serapas
+          tagSource: manual
+          tag: production
+          repositoryName: '$(Build.Repository.Name)'  
+          assets: |
+               **/*.jar
 
-steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+- stage: image
+  dependsOn:
+    - app
+  condition: succeeded('app')
+  jobs:
+    - job: image
+      steps:
+      - task: Docker@2
+        displayName: Login to Docker Hub
+        inputs:
+          command: login
+          containerRegistry: dockerhub
+      - task: Docker@2
+        displayName: Build and Push
+        inputs:
+          command: buildAndPush
+          repository: wirvsvirussolid/solid
+          tags: |
+            latest
 
-- task: GithubRelease@0 
-  displayName: 'Create GitHub Release'      
-  inputs:
-    gitHubConnection: github.com_serapas
-    repositoryName: '$(Build.Repository.Name)'  
-    assets: |
-         **/*.jar
+- stage: deploy 
+  dependsOn:
+    - image
+  jobs:
+  - deployment: VMDeploy
+    displayName: deploy
+    environment:
+      name: SoliD
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              workingDirectory: /opt/solid/solid
+              script: |
+                sudo docker-compose stop backend
+                sudo docker-compose pull --parallel
+                sudo docker-compose up -d --no-deps backend
