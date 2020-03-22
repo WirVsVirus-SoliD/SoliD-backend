@@ -4,9 +4,13 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
+  branches:
+     include:
+     - master
   tags:
     include:
     - v*.*
+
 
 stages:
 - stage: app
