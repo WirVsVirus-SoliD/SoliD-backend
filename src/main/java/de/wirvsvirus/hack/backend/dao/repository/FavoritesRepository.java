@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import de.wirvsvirus.hack.backend.dao.FavoriteEntity;
 
-public interface FavoriteRepository
+public interface FavoritesRepository
 		extends
 			JpaRepository<FavoriteEntity, Integer> {
 	@Query(value = "select oe.* from solid_favorites oe where oe.user_t_id = ?1 and oe.provider_t_id=?2", nativeQuery = true)

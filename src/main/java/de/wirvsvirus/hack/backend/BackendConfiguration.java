@@ -13,10 +13,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 
 import de.wirvsvirus.hack.backend.dao.AbstractEntity;
-import de.wirvsvirus.hack.backend.dao.repository.ProviderRepository;
+import de.wirvsvirus.hack.backend.dao.repository.ProvidersRepository;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = {ProviderRepository.class})
+@EnableJpaRepositories(basePackageClasses = {ProvidersRepository.class})
 @EntityScan(basePackageClasses = {AbstractEntity.class})
 @Component
 @ComponentScan

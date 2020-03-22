@@ -31,12 +31,12 @@ import com.google.gson.JsonObject;
 import de.wirvsvirus.hack.application.ApplicationConfiguration;
 import de.wirvsvirus.hack.backend.dao.OfferEntity;
 import de.wirvsvirus.hack.backend.dao.ProviderEntity;
-import de.wirvsvirus.hack.backend.dao.repository.OfferRepository;
-import de.wirvsvirus.hack.backend.dao.repository.ProviderRepository;
+import de.wirvsvirus.hack.backend.dao.repository.OffersRepository;
+import de.wirvsvirus.hack.backend.dao.repository.ProvidersRepository;
 import de.wirvsvirus.hack.rest.model.Address;
-import de.wirvsvirus.hack.rest.model.ProviderModel;
-import de.wirvsvirus.hack.rest.model.ProviderRegisterModel;
-import de.wirvsvirus.hack.rest.model.UserModel;
+import de.wirvsvirus.hack.rest.model.ProviderRequestModel;
+import de.wirvsvirus.hack.rest.model.ProviderResponseModel;
+import de.wirvsvirus.hack.rest.model.UserResponseModel;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -50,40 +50,51 @@ public class ProvidersController {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private OfferRepository offerRepository;
+	private OffersRepository offerRepository;
 
 	@Autowired
-	private ProviderRepository providerRepository;
+	private ProvidersRepository providerRepository;
 
 	@ApiOperation(value = "get provider with given id")
 	@RequestMapping(path = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ProviderModel getProvider(@PathVariable("id") int providerId) {
+	public ProviderResponseModel getProvider(
+			@PathVariable("id") int providerId) {
 		ProviderEntity pe = getProviderEntity(providerId);
-		return ProviderModel.fromEntity(pe);
+		return ProviderResponseModel.fromEntity(pe);
 	}
 
 	@ApiOperation(value = "get provider for given lat, long and radius")
 	@RequestMapping(path = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ProviderModel getProvidersInRange(@RequestParam float latitude,
-			@RequestParam float longitute, @RequestParam float radius) {
-		ProviderEntity pe = getProviderEntity(0);
-		return ProviderModel.fromEntity(pe);
+	public List<ProviderResponseModel> getProvidersInRange(
+			@RequestParam float latitude, @RequestParam float longitute,
+			@RequestParam float radius) {
+		List<ProviderEntity> list = this.providerRepository.findAll();
+		// list.stream().filter(entity->{
+		// LatLngTool.distance(
+		// new LatLng(entity.getLatitude(),
+		// entity.getLongitude()),
+		// new LatLng(latitude, longitute), LengthUnit.KILOMETER)
+		// }
+		// ;
+		return list.stream()
+				.map(entity -> ProviderResponseModel.fromEntity(entity))
+				.collect(Collectors.toList());
 	}
 
 	@ApiOperation(value = "delete provider with given id")
 	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = MediaType.TEXT_PLAIN_VALUE)
-	public String deleteProvider(@PathVariable("id") int providerId) {
+	public ResponseEntity<String> deleteProvider(
+			@PathVariable("id") int providerId) {
 		this.providerRepository.deleteById(providerId);
-		return "deleted";
+		return ResponseEntity.ok("");
 	}
 
 	@ApiOperation(value = "register a new provider")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ProviderModel registerProvider(
-			@RequestBody ProviderRegisterModel registerModel) {
-		ProviderModel providerModel = ProviderModel
-				.fromRegisterModel(registerModel);
-		return insertOrUpdate(providerModel);
+	public ResponseEntity<ProviderResponseModel> registerProvider(
+			@RequestBody ProviderRequestModel providerRequestModel) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(insertOrUpdate(null, providerRequestModel));
 	}
 
 	@ApiOperation(value = "upload a provider picture")
@@ -98,7 +109,7 @@ public class ProvidersController {
 			entity.setPictureName(file.getName());
 			entity.setPictureContentType(file.getContentType());
 			this.providerRepository.save(entity);
-			return ResponseEntity.ok().body("upload ok");
+			return ResponseEntity.status(HttpStatus.CREATED).body("");
 		} catch (IOException e) {
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -121,32 +132,41 @@ public class ProvidersController {
 
 	@ApiOperation(value = "get all offers for given provider")
 	@RequestMapping(path = "/{id}/offers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<UserModel> getOffers(@PathVariable("id") int providerId) {
+	public List<UserResponseModel> getOffers(
+			@PathVariable("id") int providerId) {
 		List<OfferEntity> oe = this.offerRepository
 				.findByProviderId(providerId);
-		return oe.stream().map(entity -> UserModel.fromEntity(entity.getUser()))
+		return oe.stream()
+				.map(entity -> UserResponseModel.fromEntity(entity.getUser()))
 				.collect(Collectors.toList());
 	}
 
 	@ApiOperation(value = "update given provider with provided model")
 	@RequestMapping(path = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ProviderModel updateProvider(@PathVariable("id") int providerId,
-			@RequestBody ProviderRegisterModel registerModel) {
-		ProviderModel providerModel = ProviderModel
-				.fromRegisterModel(registerModel);
-		providerModel.setProviderId(providerId);
-		return insertOrUpdate(providerModel);
+	public ResponseEntity<String> updateProvider(
+			@PathVariable("id") int providerId,
+			@RequestBody ProviderRequestModel providerRequestModel) {
+		insertOrUpdate(this.getProviderEntity(providerId),
+				providerRequestModel);
+		return ResponseEntity.ok("");
 	}
 
-	private ProviderModel insertOrUpdate(ProviderModel model) {
+	private ProviderResponseModel insertOrUpdate(ProviderEntity providerEntity,
+			ProviderRequestModel model) {
+		ProviderEntity entity = ProviderRequestModel.toEntity(model);
+		if (providerEntity != null) {
+			entity.setT_id(providerEntity.getT_id());
+			entity.setT_dateCreated(providerEntity.getT_dateCreated());
+			entity.setT_userCreated(providerEntity.getT_userCreated());
+			entity.setT_manadator(providerEntity.getT_manadator());
+		}
+		// check new address lat and long
 		Pair<Double, Double> latLong = getLatLongForAddress(model.getAddress());
-		model.setLatitude(latLong.getFirst());
-		model.setLongitude(latLong.getSecond());
-		ProviderEntity pe = ProviderModel.toEntity(model);
-		pe = this.providerRepository.saveAndFlush(pe);
+		entity.setLatitude(latLong.getFirst());
+		entity.setLongitude(latLong.getSecond());
+		entity = this.providerRepository.saveAndFlush(entity);
 
-		model.setProviderId(pe.getT_id());
-		return model;
+		return ProviderResponseModel.fromEntity(entity);
 	}
 
 	private ProviderEntity getProviderEntity(int providerId) {

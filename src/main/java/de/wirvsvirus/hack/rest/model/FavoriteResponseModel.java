@@ -10,23 +10,24 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FavoriteModel {
+public class FavoriteResponseModel {
 
 	private int favoriteId;
 
-	private UserModel user;
+	private UserResponseModel user;
 
-	private ProviderModel provider;
+	private ProviderResponseModel provider;
 
 	private Date markedDate;
 
-	public static FavoriteModel fromEntity(FavoriteEntity entity) {
-		FavoriteModel model = FavoriteModel.builder().build();
+	public static FavoriteResponseModel fromEntity(FavoriteEntity entity) {
+		FavoriteResponseModel model = FavoriteResponseModel.builder().build();
 		BeanUtils.copyProperties(entity, model);
 		model.setFavoriteId(entity.getT_id());
 		model.setMarkedDate(entity.getT_dateCreated());
-		model.setUser(UserModel.fromEntity(entity.getUser()));
-		model.setProvider(ProviderModel.fromEntity(entity.getProvider()));
+		model.setUser(UserResponseModel.fromEntity(entity.getUser()));
+		model.setProvider(
+				ProviderResponseModel.fromEntity(entity.getProvider()));
 		return model;
 	}
 }

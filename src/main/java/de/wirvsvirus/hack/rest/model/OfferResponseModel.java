@@ -10,25 +10,26 @@ import lombok.Data;
 
 @Data
 @Builder
-public class OfferModel {
+public class OfferResponseModel {
 
 	private int offerId;
 
-	private UserModel user;
+	private UserResponseModel user;
 
-	private ProviderModel provider;
+	private ProviderResponseModel provider;
 
 	private Date applyDate;
 
 	private boolean contacted;
 
-	public static OfferModel fromEntity(OfferEntity entity) {
-		OfferModel model = OfferModel.builder().build();
+	public static OfferResponseModel fromEntity(OfferEntity entity) {
+		OfferResponseModel model = OfferResponseModel.builder().build();
 		BeanUtils.copyProperties(entity, model);
 		model.setOfferId(entity.getT_id());
 		model.setApplyDate(entity.getT_dateCreated());
-		model.setUser(UserModel.fromEntity(entity.getUser()));
-		model.setProvider(ProviderModel.fromEntity(entity.getProvider()));
+		model.setUser(UserResponseModel.fromEntity(entity.getUser()));
+		model.setProvider(
+				ProviderResponseModel.fromEntity(entity.getProvider()));
 		return model;
 	}
 }
