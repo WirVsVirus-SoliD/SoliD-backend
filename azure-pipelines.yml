@@ -30,9 +30,20 @@ stages:
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
           goals: 'package'
       - task: GithubRelease@0 
+        displayName: 'Remove GitHub old release'      
+        inputs:
+          gitHubConnection: github.com_serapas
+          repositoryName: '$(Build.Repository.Name)'  
+          action: delete
+          continueOnError: true
+          tagSource: manual
+          tag: production
+      - task: GithubRelease@0 
         displayName: 'Create GitHub Release'      
         inputs:
           gitHubConnection: github.com_serapas
+          tagSource: manual
+          tag: production
           repositoryName: '$(Build.Repository.Name)'  
           assets: |
                **/*.jar
