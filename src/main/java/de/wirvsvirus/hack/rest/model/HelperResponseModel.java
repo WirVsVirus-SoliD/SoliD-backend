@@ -2,13 +2,13 @@ package de.wirvsvirus.hack.rest.model;
 
 import org.springframework.beans.BeanUtils;
 
-import de.wirvsvirus.hack.backend.dao.UserEntity;
+import de.wirvsvirus.hack.backend.dao.HelperEntity;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class UserResponseModel {
+public class HelperResponseModel {
 
 	private int userId;
 
@@ -30,8 +30,8 @@ public class UserResponseModel {
 
 	private boolean pickupRequired;
 
-	public static UserResponseModel fromEntity(UserEntity entity) {
-		UserResponseModel model = UserResponseModel.builder().build();
+	public static HelperResponseModel fromEntity(HelperEntity entity) {
+		HelperResponseModel model = HelperResponseModel.builder().build();
 		BeanUtils.copyProperties(entity, model);
 		model.setUserId(entity.getT_id());
 

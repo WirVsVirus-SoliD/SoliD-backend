@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class FavoriteRequestModel {
 
-	private int userId;
+	private int helperId;
 
 	private int providerId;
 }

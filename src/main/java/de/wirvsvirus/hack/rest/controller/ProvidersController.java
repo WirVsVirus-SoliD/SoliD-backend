@@ -32,14 +32,14 @@ import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 
 import de.wirvsvirus.hack.application.ApplicationConfiguration;
-import de.wirvsvirus.hack.backend.dao.OfferEntity;
+import de.wirvsvirus.hack.backend.dao.InquireEntity;
 import de.wirvsvirus.hack.backend.dao.ProviderEntity;
-import de.wirvsvirus.hack.backend.dao.repository.OffersRepository;
+import de.wirvsvirus.hack.backend.dao.repository.InquiresRepository;
 import de.wirvsvirus.hack.backend.dao.repository.ProvidersRepository;
 import de.wirvsvirus.hack.rest.model.Address;
+import de.wirvsvirus.hack.rest.model.InquiryResponseModel;
 import de.wirvsvirus.hack.rest.model.ProviderRequestModel;
 import de.wirvsvirus.hack.rest.model.ProviderResponseModel;
-import de.wirvsvirus.hack.rest.model.UserResponseModel;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -53,15 +53,44 @@ public class ProvidersController {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private OffersRepository offerRepository;
+	private InquiresRepository inquiresRepository;
 
 	@Autowired
-	private ProvidersRepository providerRepository;
+	private ProvidersRepository providersRepository;
+
+	@ApiOperation(value = "get all inquired helpers for given provider")
+	@RequestMapping(path = "/{providerId}/inquired", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<InquiryResponseModel> getInquiredHelpers(
+			@PathVariable("providerId") int providerId) {
+		List<InquireEntity> oe = this.inquiresRepository
+				.findByProviderId(providerId);
+		return oe.stream()
+				.map(entity -> InquiryResponseModel.fromEntity(entity))
+				.collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "toggle inquired helpers contacted state")
+	@RequestMapping(path = "/inquire/{inquiryId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> toggleContactState(
+			@PathVariable("inquiryId") int inquiryId) {
+		InquireEntity entity = this.inquiresRepository.getOne(inquiryId);
+		entity.setContacted(!entity.isContacted());
+		entity = this.inquiresRepository.save(entity);
+		return ResponseEntity.ok("");
+	}
+
+	@ApiOperation(value = "delete an inquired helper")
+	@RequestMapping(path = "/inquire/{inquiryId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> deleteInquiry(
+			@PathVariable("inquiryId") int inquiryId) {
+		this.inquiresRepository.deleteById(inquiryId);
+		return ResponseEntity.ok("");
+	}
 
 	@ApiOperation(value = "get provider with given id")
-	@RequestMapping(path = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/{providerId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ProviderResponseModel getProvider(
-			@PathVariable("id") int providerId) {
+			@PathVariable("providerId") int providerId) {
 		ProviderEntity pe = getProviderEntity(providerId);
 		return ProviderResponseModel.fromEntity(pe);
 	}
@@ -71,7 +100,7 @@ public class ProvidersController {
 	public List<ProviderResponseModel> getProvidersInRange(
 			@RequestParam float latitude, @RequestParam float longitude,
 			@RequestParam double radius) {
-		List<ProviderEntity> list = this.providerRepository.findAll();
+		List<ProviderEntity> list = this.providersRepository.findAll();
 		return list.stream().filter(entity -> calculateDistance(entity,
 				latitude, longitude) <= radius).map(entity -> {
 					ProviderResponseModel model = ProviderResponseModel
@@ -90,10 +119,10 @@ public class ProvidersController {
 	}
 
 	@ApiOperation(value = "delete provider with given id")
-	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = MediaType.TEXT_PLAIN_VALUE)
+	@RequestMapping(path = "/{providerId}", method = RequestMethod.DELETE, produces = MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity<String> deleteProvider(
-			@PathVariable("id") int providerId) {
-		this.providerRepository.deleteById(providerId);
+			@PathVariable("providerId") int providerId) {
+		this.providersRepository.deleteById(providerId);
 		return ResponseEntity.ok("");
 	}
 
@@ -106,17 +135,17 @@ public class ProvidersController {
 	}
 
 	@ApiOperation(value = "upload a provider picture")
-	@RequestMapping(path = "/{id}/upload-file", method = RequestMethod.POST)
+	@RequestMapping(path = "/{providerId}/upload-picture", method = RequestMethod.POST)
 	@Transactional
 	public ResponseEntity<String> uploadPicture(
-			@PathVariable("id") int providerId,
+			@PathVariable("providerId") int providerId,
 			@RequestParam("file") MultipartFile file) {
-		ProviderEntity entity = this.providerRepository.getOne(providerId);
+		ProviderEntity entity = this.providersRepository.getOne(providerId);
 		try {
 			entity.setPicture(file.getBytes());
 			entity.setPictureName(file.getName());
 			entity.setPictureContentType(file.getContentType());
-			this.providerRepository.save(entity);
+			this.providersRepository.save(entity);
 			return ResponseEntity.status(HttpStatus.CREATED).body("");
 		} catch (IOException e) {
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -124,11 +153,11 @@ public class ProvidersController {
 	}
 
 	@ApiOperation(value = "download a provider picture")
-	@GetMapping("/{id}/download-file/")
+	@GetMapping("/{providerId}/download-picture/")
 	@Transactional
 	public ResponseEntity<org.springframework.core.io.Resource> downloadFile(
-			@PathVariable("id") int providerId) {
-		ProviderEntity entity = this.providerRepository.getOne(providerId);
+			@PathVariable("providerId") int providerId) {
+		ProviderEntity entity = this.providersRepository.getOne(providerId);
 		return ResponseEntity.ok()
 				.contentType(MediaType
 						.parseMediaType(entity.getPictureContentType()))
@@ -138,21 +167,10 @@ public class ProvidersController {
 				.body(new ByteArrayResource(entity.getPicture()));
 	}
 
-	@ApiOperation(value = "get all offers for given provider")
-	@RequestMapping(path = "/{id}/offers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<UserResponseModel> getOffers(
-			@PathVariable("id") int providerId) {
-		List<OfferEntity> oe = this.offerRepository
-				.findByProviderId(providerId);
-		return oe.stream()
-				.map(entity -> UserResponseModel.fromEntity(entity.getUser()))
-				.collect(Collectors.toList());
-	}
-
 	@ApiOperation(value = "update given provider with provided model")
-	@RequestMapping(path = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/{providerId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> updateProvider(
-			@PathVariable("id") int providerId,
+			@PathVariable("providerId") int providerId,
 			@RequestBody ProviderRequestModel providerRequestModel) {
 		insertOrUpdate(this.getProviderEntity(providerId),
 				providerRequestModel);
@@ -172,13 +190,13 @@ public class ProvidersController {
 		Pair<Double, Double> latLong = getLatLongForAddress(model.getAddress());
 		entity.setLatitude(latLong.getFirst());
 		entity.setLongitude(latLong.getSecond());
-		entity = this.providerRepository.saveAndFlush(entity);
+		entity = this.providersRepository.saveAndFlush(entity);
 
 		return ProviderResponseModel.fromEntity(entity);
 	}
 
 	private ProviderEntity getProviderEntity(int providerId) {
-		Optional<ProviderEntity> peOpt = this.providerRepository
+		Optional<ProviderEntity> peOpt = this.providersRepository
 				.findById(providerId);
 		if (peOpt.isPresent()) {
 			return peOpt.get();

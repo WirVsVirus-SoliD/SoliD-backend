@@ -20,7 +20,7 @@ import lombok.Setter;
 public class FavoriteEntity extends AbstractEntity {
 
 	@ManyToOne
-	private UserEntity user;
+	private HelperEntity helper;
 
 	@ManyToOne
 	private ProviderEntity provider;

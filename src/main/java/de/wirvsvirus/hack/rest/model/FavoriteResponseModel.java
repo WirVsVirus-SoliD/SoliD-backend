@@ -14,7 +14,7 @@ public class FavoriteResponseModel {
 
 	private int favoriteId;
 
-	private UserResponseModel user;
+	private HelperResponseModel helper;
 
 	private ProviderResponseModel provider;
 
@@ -25,7 +25,7 @@ public class FavoriteResponseModel {
 		BeanUtils.copyProperties(entity, model);
 		model.setFavoriteId(entity.getT_id());
 		model.setMarkedDate(entity.getT_dateCreated());
-		model.setUser(UserResponseModel.fromEntity(entity.getUser()));
+		model.setHelper(HelperResponseModel.fromEntity(entity.getHelper()));
 		model.setProvider(
 				ProviderResponseModel.fromEntity(entity.getProvider()));
 		return model;

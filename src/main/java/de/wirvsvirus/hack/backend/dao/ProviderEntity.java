@@ -89,5 +89,5 @@ public class ProviderEntity extends AbstractEntity {
 
 	@Column
 	@OneToMany(mappedBy = "provider")
-	private List<OfferEntity> offer;
+	private List<InquireEntity> offer;
 }

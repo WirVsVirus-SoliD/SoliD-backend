@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class OfferRequestModel {
+public class InquiryRequestModel {
 
-	private int userId;
+	private int helperId;
 
 	private int providerId;
 }

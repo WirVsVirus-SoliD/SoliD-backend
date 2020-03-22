@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserRequestModel {
+public class HelperRequestModel {
 
 	private String firstName;
 

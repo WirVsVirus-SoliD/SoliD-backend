@@ -14,14 +14,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "solid_offers")
+@Table(name = "solid_inquires")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OfferEntity extends AbstractEntity {
+public class InquireEntity extends AbstractEntity {
 
 	@ManyToOne
-	private UserEntity user;
+	private HelperEntity helper;
 
 	@ManyToOne
 	private ProviderEntity provider;

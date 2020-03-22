@@ -17,11 +17,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "solid_users")
+@Table(name = "solid_helpers")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity extends AbstractEntity {
+public class HelperEntity extends AbstractEntity {
 
 	@Column
 	private String firstName;
@@ -51,7 +51,7 @@ public class UserEntity extends AbstractEntity {
 	private boolean pickupRequired;
 
 	@Column
-	@OneToMany(mappedBy = "user")
-	private List<OfferEntity> offer;
+	@OneToMany(mappedBy = "helper")
+	private List<InquireEntity> offer;
 
 }
