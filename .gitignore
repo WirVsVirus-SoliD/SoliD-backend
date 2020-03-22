@@ -8,3 +8,4 @@ target/
 .prefs
 *.class
 /bin/
+*.swp
