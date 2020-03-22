@@ -27,6 +27,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.javadocmd.simplelatlng.LatLng;
+import com.javadocmd.simplelatlng.LatLngTool;
+import com.javadocmd.simplelatlng.util.LengthUnit;
 
 import de.wirvsvirus.hack.application.ApplicationConfiguration;
 import de.wirvsvirus.hack.backend.dao.OfferEntity;
@@ -67,18 +70,16 @@ public class ProvidersController {
 	@RequestMapping(path = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ProviderResponseModel> getProvidersInRange(
 			@RequestParam float latitude, @RequestParam float longitute,
-			@RequestParam float radius) {
+			@RequestParam double radius) {
 		List<ProviderEntity> list = this.providerRepository.findAll();
-		// list.stream().filter(entity->{
-		// LatLngTool.distance(
-		// new LatLng(entity.getLatitude(),
-		// entity.getLongitude()),
-		// new LatLng(latitude, longitute), LengthUnit.KILOMETER)
-		// }
-		// ;
-		return list.stream()
-				.map(entity -> ProviderResponseModel.fromEntity(entity))
+		return list.stream().filter(entity -> {
+			double distance = LatLngTool.distance(
+					new LatLng(entity.getLatitude(), entity.getLongitude()),
+					new LatLng(latitude, longitute), LengthUnit.KILOMETER);
+			return distance <= radius;
+		}).map(entity -> ProviderResponseModel.fromEntity(entity))
 				.collect(Collectors.toList());
+
 	}
 
 	@ApiOperation(value = "delete provider with given id")
