@@ -95,8 +95,8 @@ public class ProvidersController {
 		return ProviderResponseModel.fromEntity(pe);
 	}
 
-	@ApiOperation(value = "get provider for given lat, long and radius")
-	@RequestMapping(path = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "get providers for given lat, long and radius")
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ProviderResponseModel> getProvidersInRange(
 			@RequestParam float latitude, @RequestParam float longitude,
 			@RequestParam double radius) {
@@ -228,6 +228,9 @@ public class ProvidersController {
 
 		String url = appConfig.getRestEndpoint().replace("{ADR}",
 				addressUrlPrepare.toString());
+
+		System.out.println("Calling url to geocode: " + url);
+
 		return url;
 	}
 

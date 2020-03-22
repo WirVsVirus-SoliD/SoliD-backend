@@ -34,7 +34,7 @@ import de.wirvsvirus.hack.rest.model.ProviderResponseModel;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/helpers")
 public class HelpersController {
 
 	@Autowired
@@ -92,8 +92,9 @@ public class HelpersController {
 	}
 
 	@ApiOperation(value = "get helper with given id")
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public HelperResponseModel getUser(@RequestParam int helperId) {
+	@RequestMapping(path = "/{helperId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public HelperResponseModel getHelpers(
+			@PathVariable("helperId") int helperId) {
 		return HelperResponseModel.fromEntity(getHelperEntity(helperId));
 	}
 
