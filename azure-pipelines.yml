@@ -11,7 +11,7 @@ trigger:
 stages:
 - stage: app
   jobs:
-    - job: A
+    - job: app
       pool:
         vmImage: 'ubuntu-latest'
       steps:
@@ -38,7 +38,7 @@ stages:
     - app
   condition: succeeded('app')
   jobs:
-    - job: A
+    - job: image
       steps:
       - task: Docker@2
         displayName: Login to Docker Hub
@@ -52,3 +52,25 @@ stages:
           repository: wirvsvirussolid/solid
           tags: |
             latest
+
+- stage: deploy 
+  dependsOn:
+    - image
+  jobs:
+  - deployment: VMDeploy
+    displayName: deploy
+    environment:
+      name: SoliD
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              workingDirectory: /opt/solid/solid
+              script: |
+                sudo docker-compose stop backend
+                sudo docker-compose pull --parallel
+                sudo docker-compose up -d --no-deps backend
