@@ -57,7 +57,7 @@ public class HelpersController {
 	}
 
 	@ApiOperation(value = "get all favorites for given helper")
-	@RequestMapping(path = "/favorites/{helperId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/{helperId}/favorites", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ProviderResponseModel> getFavorites(
 			@PathVariable("helperId") int helperId) {
 		List<FavoriteEntity> oe = this.favoritesRepository
