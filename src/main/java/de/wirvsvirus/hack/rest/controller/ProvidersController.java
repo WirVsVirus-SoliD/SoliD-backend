@@ -69,17 +69,24 @@ public class ProvidersController {
 	@ApiOperation(value = "get provider for given lat, long and radius")
 	@RequestMapping(path = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ProviderResponseModel> getProvidersInRange(
-			@RequestParam float latitude, @RequestParam float longitute,
+			@RequestParam float latitude, @RequestParam float longitude,
 			@RequestParam double radius) {
 		List<ProviderEntity> list = this.providerRepository.findAll();
-		return list.stream().filter(entity -> {
-			double distance = LatLngTool.distance(
-					new LatLng(entity.getLatitude(), entity.getLongitude()),
-					new LatLng(latitude, longitute), LengthUnit.KILOMETER);
-			return distance <= radius;
-		}).map(entity -> ProviderResponseModel.fromEntity(entity))
-				.collect(Collectors.toList());
+		return list.stream().filter(entity -> calculateDistance(entity,
+				latitude, longitude) <= radius).map(entity -> {
+					ProviderResponseModel model = ProviderResponseModel
+							.fromEntity(entity);
+					model.setDistance(
+							calculateDistance(entity, latitude, longitude));
+					return model;
+				}).collect(Collectors.toList());
+	}
 
+	private double calculateDistance(ProviderEntity entity, double latitude,
+			double longitude) {
+		return LatLngTool.distance(
+				new LatLng(entity.getLatitude(), entity.getLongitude()),
+				new LatLng(latitude, longitude), LengthUnit.KILOMETER);
 	}
 
 	@ApiOperation(value = "delete provider with given id")
@@ -203,7 +210,6 @@ public class ProvidersController {
 
 		String url = appConfig.getRestEndpoint().replace("{ADR}",
 				addressUrlPrepare.toString());
-
 		return url;
 	}
 

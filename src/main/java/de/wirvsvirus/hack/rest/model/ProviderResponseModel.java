@@ -44,7 +44,7 @@ public class ProviderResponseModel {
 
 	private boolean overnightPossible;
 
-	private float distance;
+	private double distance;
 
 	private double latitude;
 
