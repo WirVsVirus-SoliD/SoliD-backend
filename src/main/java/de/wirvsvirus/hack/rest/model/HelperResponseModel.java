@@ -10,7 +10,7 @@ import lombok.Data;
 @Builder
 public class HelperResponseModel {
 
-	private int userId;
+	private int helperId;
 
 	private String firstName;
 
@@ -33,7 +33,7 @@ public class HelperResponseModel {
 	public static HelperResponseModel fromEntity(HelperEntity entity) {
 		HelperResponseModel model = HelperResponseModel.builder().build();
 		BeanUtils.copyProperties(entity, model);
-		model.setUserId(entity.getT_id());
+		model.setHelperId(entity.getT_id());
 
 		return model;
 	}

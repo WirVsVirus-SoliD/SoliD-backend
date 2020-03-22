@@ -228,9 +228,6 @@ public class ProvidersController {
 
 		String url = appConfig.getRestEndpoint().replace("{ADR}",
 				addressUrlPrepare.toString());
-
-		System.out.println("Calling url to geocode: " + url);
-
 		return url;
 	}
 
