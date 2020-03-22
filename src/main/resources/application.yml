@@ -14,3 +14,23 @@ spring:
 appConfig: 
     restEndpoint: https://geocode.xyz/{ADR}?geoit=json&auth=${geocodeKey}
     timeout: 60
+keycloak:
+  realm: solid
+  auth-server-url: https://solid-keycloak.52-174-17.190.nip.io/auth
+  ssl-required: external 
+  resource: solid
+  principal-attribute: preferred_username
+  cors: true 
+  credentials:
+    secret: 6f2e5986-7526-4f2e-9536-564da7453ee6
+  bearer-only: true
+  securityConstraints[0]:
+    securityCollections[0]:
+      name: public endpoints
+      patterns[0]: /* #public endpoint; no role is associated with it
+  securityConstraints[1]:
+    authRoles[0]: user #user must have `authenticated-user` role to access the resource   
+    securityCollections[0]:
+      name: protected endpoints
+      patterns[0]: /providers/* #secure all endpoints by default
+      patterns[1]: /helpers/* #secure all endpoints by default
