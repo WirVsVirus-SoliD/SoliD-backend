@@ -57,7 +57,7 @@ stages:
           command: buildAndPush
           repository: wirvsvirussolid/solid
           tags: |
-            latest
+            backend
 
 - stage: deploy 
   dependsOn:
