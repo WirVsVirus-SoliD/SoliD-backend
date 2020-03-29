@@ -102,7 +102,7 @@ public class FavoritesController extends BaseController {
 	}
 
 	@DELETE
-	@Path("/{favoriteid})")
+	@Path("/{favoriteid}")
 	@Operation(description = "remove a favorite with given favoriteId")
 	@Transactional
 	public Response deleteFavorite(
