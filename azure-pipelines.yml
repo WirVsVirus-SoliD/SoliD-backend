@@ -1,7 +1,15 @@
+variables:
+  devops_rootdir: /opt/solid
+  devops_dir: $(devops_rootdir)/backend
+  backend_dir: /opt/backend/backend-$(Build.SourceBranchName)
+  backend_rooturl: solid-backend.52-174-17.190.nip.io
+  env_file: .env
+
 trigger:
   branches:
      include:
-     - master
+       - master
+       - quarkus
 
 stages:
 - stage: app
@@ -28,13 +36,13 @@ stages:
           repositoryName: '$(Build.Repository.Name)'  
           action: delete
           tagSource: manual
-          tag: production
+          tag: $(Build.SourceBranchName)
       - task: GithubRelease@0 
         displayName: 'Create GitHub Release'      
         inputs:
           gitHubConnection: github.com_serapas
           tagSource: manual
-          tag: production
+          tag: $(Build.SourceBranchName)
           repositoryName: '$(Build.Repository.Name)'  
           assets: |
                **/*.jar
@@ -52,12 +60,21 @@ stages:
           command: login
           containerRegistry: dockerhub
       - task: Docker@2
-        displayName: Build and Push
+        displayName: build
         inputs:
-          command: buildAndPush
+          command: build
+          arguments: --build-arg branch=$(Build.SourceBranch)
           repository: wirvsvirussolid/solid
           tags: |
-            backend
+            backend-$(Build.SourceBranchName)
+      - task: Docker@2
+        displayName: push
+        inputs:
+          command: push 
+          containerRegistry: dockerhub
+          repository: wirvsvirussolid/solid
+          tags: |
+            backend-$(Build.SourceBranchName)
 
 - stage: deploy 
   dependsOn:
@@ -75,8 +92,11 @@ stages:
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              workingDirectory: /opt/solid/solid
               script: |
+                sudo mkdir -p $(backend_dir)
+                sudo rsync -av $(devops_dir)/ $(backend_dir)/
+                cd $(app_dir)
+                sudo sed -i -e "s/BACKEND_VIRTUAL_HOST.*$/BACKEND_VIRTUAL_HOST=$(Build.SourceBranchName).$(backend_rooturl)/" $(env_file)
                 sudo docker-compose stop backend
                 sudo docker-compose pull --parallel
                 sudo docker-compose up -d --no-deps backend
