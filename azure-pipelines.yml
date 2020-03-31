@@ -45,7 +45,7 @@ stages:
           tag: $(Build.SourceBranchName)
           repositoryName: '$(Build.Repository.Name)'  
           assets: |
-               **/*.jar
+               target/solid-backend.jar
 
 - stage: image
   dependsOn:
