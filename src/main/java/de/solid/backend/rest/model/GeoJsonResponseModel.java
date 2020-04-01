@@ -1,5 +1,6 @@
 package de.solid.backend.rest.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,11 @@ public class GeoJsonResponseModel {
 
 		private String type = "name";
 
-		private Map<String, String> properties = Map.of("name", "EPSG:4326");
+		private Map<String, String> properties;
+
+		public CRS() {
+			properties = new HashMap<>();
+			properties.put("name", "EPSG:4326");
+		}
 	}
 }
