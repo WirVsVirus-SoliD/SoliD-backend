@@ -50,6 +50,7 @@ import de.solid.backend.dao.repository.ProvidersRepository;
 import de.solid.backend.rest.clients.GeocodeResponse;
 import de.solid.backend.rest.clients.GeocodeRestClient;
 import de.solid.backend.rest.model.AddressRequestModel;
+import de.solid.backend.rest.model.GeoJsonFeatureModel;
 import de.solid.backend.rest.model.GeoJsonResponseModel;
 import de.solid.backend.rest.model.InquiryResponseModel;
 import de.solid.backend.rest.model.ProviderRequestModel;
@@ -140,24 +141,26 @@ public class ProvidersController extends BaseController {
 	@Operation(description = "get providers for given lat, long and radius")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<GeoJsonResponseModel> getProvidersInRange(
+	public GeoJsonResponseModel getProvidersInRange(
 			@QueryParam("latitude") float latitude,
 			@QueryParam("longitude") float longitude,
 			@QueryParam("radius") Optional<Double> radius) {
 		List<ProviderEntity> list = this.providersRepository.findAll().list();
-		return list.stream().filter(entity -> {
+		List<GeoJsonFeatureModel> features = list.stream().filter(entity -> {
 			if (radius.isPresent()) {
 				return calculateDistance(entity, latitude, longitude) <= radius
 						.get();
 			} else
 				return true;
 		}).map(entity -> {
-			GeoJsonResponseModel model = new GeoJsonResponseModel()
+			GeoJsonFeatureModel model = new GeoJsonFeatureModel()
 					.fromEntity(entity);
 			model.getProperties().setDistance(
 					calculateDistance(entity, latitude, longitude));
 			return model;
 		}).collect(Collectors.toList());
+
+		return new GeoJsonResponseModel(features);
 	}
 
 	@Operation(description = "upload a provider picture")

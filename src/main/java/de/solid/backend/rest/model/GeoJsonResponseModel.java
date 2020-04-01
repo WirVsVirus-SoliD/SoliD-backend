@@ -1,10 +1,8 @@
 package de.solid.backend.rest.model;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import de.solid.backend.dao.ProviderEntity;
-import de.solid.backend.rest.model.base.BaseResponseModel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,32 +10,22 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GeoJsonResponseModel
-		extends
-			BaseResponseModel<GeoJsonResponseModel, ProviderEntity> {
+@RequiredArgsConstructor
+public class GeoJsonResponseModel {
 
-	private String type = "Feature";
+	private String type = "FeatureCollection";
 
-	private ProviderResponseModel properties;
+	private CRS crs = new CRS();
 
-	private Geometry geometry;
+	@NonNull
+	private List<GeoJsonFeatureModel> features;
 
 	@Getter
 	@Setter
-	@RequiredArgsConstructor
-	public class Geometry {
+	public class CRS {
 
-		private String type = "Point";
+		private String type = "name";
 
-		@NonNull
-		private List<Double> coordinates;
-	}
-
-	@Override
-	protected void mapAdditionalAttributes(GeoJsonResponseModel model,
-			ProviderEntity entity) {
-		model.setProperties(new ProviderResponseModel().fromEntity(entity));
-		model.setGeometry(new Geometry(
-				Arrays.asList(entity.getLatitude(), entity.getLongitude())));
+		private Map<String, String> properties = Map.of("name", "EPSG:4326");
 	}
 }
