@@ -54,10 +54,6 @@ public class ProviderResponseModel
 
 	private double distance;
 
-	// private double latitude;
-
-	// private double longitude;
-
 	@Override
 	protected void mapAdditionalAttributes(ProviderResponseModel model,
 			ProviderEntity entity) {
