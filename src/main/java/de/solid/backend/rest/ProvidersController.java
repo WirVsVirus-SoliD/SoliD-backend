@@ -50,16 +50,16 @@ import de.solid.backend.dao.repository.ProvidersRepository;
 import de.solid.backend.rest.clients.GeocodeResponse;
 import de.solid.backend.rest.clients.GeocodeRestClient;
 import de.solid.backend.rest.model.AddressRequestModel;
+import de.solid.backend.rest.model.GeoJsonResponseModel;
 import de.solid.backend.rest.model.InquiryResponseModel;
 import de.solid.backend.rest.model.ProviderRequestModel;
 import de.solid.backend.rest.model.ProviderResponseModel;
-import io.quarkus.security.Authenticated;
 
 @OpenAPIDefinition(tags = {
 		@Tag(name = "widget", description = "Widget operations."),
 		@Tag(name = "gasket", description = "Operations related to gaskets")}, info = @Info(title = "Example API", version = "1.0.1", contact = @Contact(name = "Example API Support", url = "http://exampleurl.com/contact", email = "techsupport@example.com"), license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0.html")))
 @Path("/providers")
-@Authenticated
+// @Authenticated
 public class ProvidersController extends BaseController {
 
 	private static final Logger _log = LoggerFactory
@@ -139,7 +139,7 @@ public class ProvidersController extends BaseController {
 	@Operation(description = "get providers for given lat, long and radius")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<ProviderResponseModel> getProvidersInRange(
+	public List<GeoJsonResponseModel> getProvidersInRange(
 			@QueryParam("latitude") float latitude,
 			@QueryParam("longitude") float longitude,
 			@QueryParam("radius") Optional<Double> radius) {
@@ -151,9 +151,9 @@ public class ProvidersController extends BaseController {
 			} else
 				return true;
 		}).map(entity -> {
-			ProviderResponseModel model = new ProviderResponseModel()
-					.fromEntity(entity);
-			model.setDistance(calculateDistance(entity, latitude, longitude));
+			GeoJsonResponseModel model = new GeoJsonResponseModel().fromEntity(entity);
+			model.getProperties().setDistance(
+					calculateDistance(entity, latitude, longitude));
 			return model;
 		}).collect(Collectors.toList());
 	}

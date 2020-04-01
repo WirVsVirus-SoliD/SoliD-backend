@@ -30,9 +30,6 @@ public class AbstractEntity {
 	@Column
 	private long t_id;
 
-	@Column
-	private String t_manadator;
-
 	@Column(name = "t_user_created")
 	private String t_userCreated;
 

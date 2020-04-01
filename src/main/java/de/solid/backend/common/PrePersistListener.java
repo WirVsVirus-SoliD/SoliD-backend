@@ -17,9 +17,6 @@ public class PrePersistListener {
 			e.setT_userCreated(AbstractEntity.SYSTEM_USER);
 		}
 		setUpdateFields(e);
-		if (StringUtils.isEmpty(e.getT_manadator())) {
-			e.setT_manadator(AbstractEntity.SOLID_MANDATOR);
-		}
 	}
 
 	@PreUpdate
