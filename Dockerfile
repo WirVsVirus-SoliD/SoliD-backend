@@ -1,13 +1,7 @@
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:11-jre-slim-buster
 
-<<<<<<< HEAD
-# set shell to bash
-# source: https://stackoverflow.com/a/40944512/3128926
-RUN apt update && apt install -y bash curl jq
-=======
 ARG branch=master
->>>>>>> 7f5c113e542e3356db1bd86f9daf8cb19ab694d4
 
 WORKDIR /app
 
