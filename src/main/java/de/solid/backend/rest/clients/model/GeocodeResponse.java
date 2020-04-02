@@ -1,4 +1,4 @@
-package de.solid.backend.rest.clients;
+package de.solid.backend.rest.clients.model;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -47,8 +47,8 @@ import de.solid.backend.dao.ProviderEntity;
 import de.solid.backend.dao.repository.AddressRepository;
 import de.solid.backend.dao.repository.InquiriesRepository;
 import de.solid.backend.dao.repository.ProvidersRepository;
-import de.solid.backend.rest.clients.GeocodeResponse;
 import de.solid.backend.rest.clients.GeocodeRestClient;
+import de.solid.backend.rest.clients.model.GeocodeResponse;
 import de.solid.backend.rest.model.AddressRequestModel;
 import de.solid.backend.rest.model.GeoJsonFeatureModel;
 import de.solid.backend.rest.model.GeoJsonResponseModel;
@@ -159,7 +159,6 @@ public class ProvidersController extends BaseController {
 					calculateDistance(entity, latitude, longitude));
 			return model;
 		}).collect(Collectors.toList());
-
 		return new GeoJsonResponseModel(features);
 	}
 

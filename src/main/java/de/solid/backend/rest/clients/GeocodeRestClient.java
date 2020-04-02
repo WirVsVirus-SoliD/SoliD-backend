@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
+import de.solid.backend.rest.clients.model.GeocodeResponse;
+
 @Path("/")
 @RegisterRestClient
 public interface GeocodeRestClient {
