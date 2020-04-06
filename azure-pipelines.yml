@@ -2,7 +2,7 @@ variables:
   devops_rootdir: /opt/solid
   devops_dir: $(devops_rootdir)/backend
   backend_dir: /opt/backend/backend-$(Build.SourceBranchName)
-  backend_rooturl: solid-backend.52-174-17.190.nip.io
+  backend_rooturl: solid-backend.13-69-48-151.nip.io
   env_file: .env
 
 trigger:
