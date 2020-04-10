@@ -14,4 +14,8 @@ public class ProvidersRepository implements PanacheRepository<ProviderEntity> {
   public ProviderEntity findByAccount(long accountId) {
     return find("account.t_id", accountId).firstResult();
   }
+
+  public void deleteByAccountId(long accountId) {
+    delete("account.t_id", accountId);
+  }
 }

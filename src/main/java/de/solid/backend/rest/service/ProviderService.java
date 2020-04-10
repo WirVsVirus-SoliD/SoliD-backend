@@ -12,6 +12,7 @@ import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import de.solid.backend.clients.GeocodeRestClient;
 import de.solid.backend.clients.model.GeocodeResponse;
+import de.solid.backend.common.AccountType;
 import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.AddressEntity;
 import de.solid.backend.dao.InquiryEntity;
@@ -25,8 +26,7 @@ import de.solid.backend.rest.model.provider.InquiryResponseModel;
 import de.solid.backend.rest.model.provider.ProviderRequestModel;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
 import de.solid.backend.rest.service.exception.RestClientException;
-import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.Mailer;
+import io.quarkus.mailer.MailTemplate;
 
 /*
  * provides provider related operations
@@ -48,7 +48,7 @@ public class ProviderService {
   private TicketService ticketService;
 
   @Inject
-  private Mailer mailer;
+  private MailTemplate helperActivationMail;
 
   @Inject
   @RestClient
@@ -61,9 +61,9 @@ public class ProviderService {
     this.retrieveLatLong(model.getAddress(), provider);
     provider.setAccount(account);
     this.providersRepository.persist(provider);
-    this.ticketService.createTicket(account.getT_id());
-    this.mailer.send(Mail.withText(model.getAccount().getEmail(), "Registierung abschliessen",
-        "follow the link"));
+    String uuid = this.ticketService.createTicket(account.getT_id(), AccountType.Provider);
+    this.helperActivationMail.to(model.getAccount().getEmail())
+        .data("firstName", model.getAccount().getFirstName()).data("uuid", uuid).send();
   }
 
   @Transactional
@@ -79,7 +79,7 @@ public class ProviderService {
   }
 
   @Transactional
-  public void deleteProvider(String authenticatedUserEmail) throws NoSuchEntityException {
+  public void deleteProvider(String authenticatedUserEmail) {
     AccountEntity account = this.accountService.deleteAccount(authenticatedUserEmail);
     ProviderEntity provider = this.getProviderByAccountId(account.getT_id());
     List<InquiryEntity> inquires = this.inquiriesRepository.findByProviderId(provider.getT_id());
@@ -89,16 +89,20 @@ public class ProviderService {
     this.providersRepository.delete(provider);
   }
 
-  public List<InquiryResponseModel> getHelpersInquired(String authenticatedUserEmail)
-      throws NoSuchEntityException {
+  @Transactional
+  public void deleteProvider(long accountId) {
+    this.accountService.deleteAccount(accountId);
+    this.providersRepository.deleteByAccountId(accountId);
+  }
+
+  public List<InquiryResponseModel> getHelpersInquired(String authenticatedUserEmail) {
     long providerEntityId = getProviderIdByEmail(authenticatedUserEmail);
     List<InquiryEntity> entites = this.inquiriesRepository.findByProviderId(providerEntityId);
     return entites.stream().map(en -> new InquiryResponseModel().fromEntity(en))
         .collect(Collectors.toList());
   }
 
-  public void toggleHelperContacted(long inquiryId, String authenticatedUserEmail)
-      throws NoSuchEntityException {
+  public void toggleHelperContacted(long inquiryId, String authenticatedUserEmail) {
     InquiryEntity entity = this.inquiriesRepository.findById(inquiryId);
     if (entity != null) {
       long providerEntityId = getProviderIdByEmail(authenticatedUserEmail);
@@ -112,8 +116,7 @@ public class ProviderService {
     }
   }
 
-  public void removeFromInquiry(long inquiryId, String authenticatedUserEmail)
-      throws NoSuchEntityException {
+  public void removeFromInquiry(long inquiryId, String authenticatedUserEmail) {
     InquiryEntity entity = this.inquiriesRepository.findById(inquiryId);
     if (entity != null) {
       long providerEntityId = getProviderIdByEmail(authenticatedUserEmail);

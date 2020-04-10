@@ -4,6 +4,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import de.solid.backend.common.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class TicketEntity extends AbstractEntity {
 
   @Column(name = "related_account")
   private long relatedAccount;
+
+  @Column(name = "related_account_type")
+  private AccountType relatedAccountType;
 
   @Column(name = "ticket_validated")
   private boolean ticketValidated;

@@ -37,8 +37,8 @@ public class MediaService {
           InputPart inputPart = input.getParts().get(0);
           InputStream inputStream = inputPart.getBody(InputStream.class, null);
           byte[] bytes = IOUtils.toByteArray(inputStream);
-          MediaEntity mediaEntity = MediaEntity.builder().picture(bytes)
-              .pictureName(
+          MediaEntity mediaEntity = MediaEntity.builder().media(bytes)
+              .mediaName(
                   getFilename(inputPart.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION)))
               .build();
           entity.setMedia(mediaEntity);

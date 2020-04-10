@@ -60,9 +60,18 @@ public class AccountService {
 
   public AccountEntity deleteAccount(String authenticatedUserEmail) {
     AccountEntity entity = findByEmail(authenticatedUserEmail);
+    this.deleteAccount(entity);
+    return entity;
+  }
+
+  public void deleteAccount(long accountId) {
+    AccountEntity entity = this.accountRepository.findById(accountId);
+    this.deleteAccount(entity);
+  }
+
+  private void deleteAccount(AccountEntity entity) {
     this.keycloakService.deleteUser(entity.getKeycloakUserId());
     this.accountRepository.delete(entity);
-    return entity;
   }
 
   private void checkEmailValid(String email) {

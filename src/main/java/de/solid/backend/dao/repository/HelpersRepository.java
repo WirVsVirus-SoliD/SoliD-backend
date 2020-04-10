@@ -18,4 +18,8 @@ public class HelpersRepository implements PanacheRepository<HelperEntity> {
   public HelperEntity findByAccount(long accountId) {
     return find("account.t_id", accountId).firstResult();
   }
+
+  public void deleteByAccountId(long accountId) {
+    delete("account.t_id", accountId);
+  }
 }

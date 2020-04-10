@@ -37,7 +37,7 @@ public class MediaController extends BaseController {
   public Response downloadPicture(@Parameter(
       description = "id of the account dataset") @PathParam("accountid") long accountId) {
     MediaEntity entity = this.mediaService.getMediaEntity(accountId);
-    return Response.ok().entity(entity.getPicture()).header(HttpHeaders.CONTENT_DISPOSITION,
-        "attachment; filename=\"" + entity.getPictureName() + "\"").build();
+    return Response.ok().entity(entity.getMedia()).header(HttpHeaders.CONTENT_DISPOSITION,
+        "attachment; filename=\"" + entity.getMediaName() + "\"").build();
   }
 }

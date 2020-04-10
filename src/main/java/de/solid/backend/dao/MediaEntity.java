@@ -21,11 +21,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "solid_account_picture")
+@Table(name = "solid_account_media")
 public class MediaEntity extends AbstractEntity {
 
   @Lob
-  private byte[] picture;
+  private byte[] media;
 
-  private String pictureName;
+  private String mediaName;
 }

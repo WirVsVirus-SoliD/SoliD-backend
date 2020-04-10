@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import de.solid.backend.common.AccountType;
 import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.FavoriteEntity;
 import de.solid.backend.dao.HelperEntity;
@@ -22,8 +23,7 @@ import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import de.solid.backend.rest.service.exception.DuplicateException;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
 import de.solid.backend.rest.service.exception.SolidException;
-import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.Mailer;
+import io.quarkus.mailer.MailTemplate;
 
 /*
  * provides helper related operations
@@ -51,7 +51,7 @@ public class HelperService {
   private FavoritesRepository favoritesRepository;
 
   @Inject
-  private Mailer mailer;
+  private MailTemplate helperActivationMail;
 
   @Transactional
   public void registerHelper(HelperRequestModel model) {
@@ -59,9 +59,9 @@ public class HelperService {
     HelperEntity helper = model.toEntity(null);
     helper.setAccount(account);
     this.helpersRepository.persist(helper);
-    this.ticketService.createTicket(account.getT_id());
-    this.mailer.send(Mail.withText(model.getAccount().getEmail(), "Registierung abschliessen",
-        "follow the link"));
+    String uuid = this.ticketService.createTicket(account.getT_id(), AccountType.Helper);
+    this.helperActivationMail.to(model.getAccount().getEmail())
+        .data("firstName", model.getAccount().getFirstName()).data("uuid", uuid).send();
   }
 
   @Transactional
@@ -74,7 +74,7 @@ public class HelperService {
   }
 
   @Transactional
-  public void deleteHelper(String authenticatedUserEmail) throws NoSuchEntityException {
+  public void deleteHelper(String authenticatedUserEmail) {
     AccountEntity account = this.accountService.deleteAccount(authenticatedUserEmail);
     HelperEntity helper = this.getHelperByAccountId(account.getT_id());
     this.inquiriesRepository.findByHelperId(helper.getT_id())
@@ -85,8 +85,13 @@ public class HelperService {
   }
 
   @Transactional
-  public void removeFromInquiry(long providerId, String authenticatedUserEmail)
-      throws NoSuchEntityException {
+  public void deleteHelper(long accountId) {
+    this.accountService.deleteAccount(accountId);
+    this.helpersRepository.deleteByAccountId(accountId);
+  }
+
+  @Transactional
+  public void removeFromInquiry(long providerId, String authenticatedUserEmail) {
     long helperEntityId = getHelperByEmail(authenticatedUserEmail).getT_id();
     InquiryEntity entity =
         this.inquiriesRepository.findByHelperAndProvider(helperEntityId, providerId);
@@ -102,8 +107,7 @@ public class HelperService {
     }
   }
 
-  public List<ProviderResponseModel> getProvidersInquiredFor(String authenticatedUserEmail)
-      throws NoSuchEntityException {
+  public List<ProviderResponseModel> getProvidersInquiredFor(String authenticatedUserEmail) {
     long helperEntityId = getHelperByEmail(authenticatedUserEmail).getT_id();
     List<InquiryEntity> entites = this.inquiriesRepository.findByHelperId(helperEntityId);
     return entites.stream()
