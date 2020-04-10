@@ -1,6 +1,8 @@
 package de.solid.backend.dao;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,4 +32,7 @@ public class AccountEntity extends AbstractEntity {
   private String phone;
 
   private String keycloakUserId;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  private MediaEntity media;
 }

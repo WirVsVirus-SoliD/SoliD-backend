@@ -2,6 +2,7 @@ package de.solid.backend.rest;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import de.solid.backend.rest.model.FavoriteRequestModel;
 import de.solid.backend.rest.model.helper.HelperRequestModel;
 import de.solid.backend.rest.model.helper.InquiryRequestModel;
 import de.solid.backend.rest.service.HelperService;
@@ -89,5 +91,33 @@ public class HelpersController extends BaseController {
       description = "id of the inquiry dataset") @PathParam("providerid") long providerid) {
     this.helperService.removeFromInquiry(providerid, getAuthenticatedUserEmail());
     return HTTP_OK();
+  }
+
+  @Operation(description = "saves the given provider as favorite for the given helper")
+  @POST
+  @Path("/favorites")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Transactional
+  public Response markFavorite(@RequestBody FavoriteRequestModel model) {
+    this.helperService.markFavorite(model, getAuthenticatedUserEmail());
+    return HTTP_OK();
+  }
+
+  @DELETE
+  @Path("/favorites/{favoriteid}")
+  @Operation(description = "remove a favorite with given favoriteId")
+  @Transactional
+  public Response deleteFavorite(@Parameter(
+      description = "id of the favorite dataset") @PathParam("favoriteid") long favoriteId) {
+    this.helperService.deleteFavorite(favoriteId, getAuthenticatedUserEmail());
+    return HTTP_OK();
+  }
+
+  @GET
+  @Path("/favorites")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Operation(description = "get all marked favorites for this helper")
+  public Response getFavorites() {
+    return HTTP_OK(this.helperService.getFavorites(getAuthenticatedUserEmail()));
   }
 }

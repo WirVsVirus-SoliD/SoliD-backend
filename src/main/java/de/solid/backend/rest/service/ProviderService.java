@@ -7,8 +7,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
@@ -36,8 +34,6 @@ import io.quarkus.mailer.Mailer;
  */
 @ApplicationScoped
 public class ProviderService {
-
-  private static final Logger _log = LoggerFactory.getLogger(ProviderService.class);
 
   @Inject
   private ProvidersRepository providersRepository;

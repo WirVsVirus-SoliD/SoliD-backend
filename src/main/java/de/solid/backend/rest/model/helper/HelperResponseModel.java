@@ -18,6 +18,8 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private long helperId;
 
+  private long accountId;
+
   private String firstName;
 
   private String lastName;
@@ -39,5 +41,6 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
   @Override
   protected void mapAdditionalAttributes(HelperResponseModel model, HelperEntity entity) {
     model.setHelperId(entity.getT_id());
+    model.setAccountId(entity.getAccount().getT_id());
   }
 }

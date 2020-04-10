@@ -23,6 +23,8 @@ public class ProviderResponseModel
 
   private long providerId;
 
+  private long accountId;
+
   private String farmName;
 
   private List<Crops> crops;
@@ -57,5 +59,6 @@ public class ProviderResponseModel
           .map(v -> Crops.valueOf(v)).collect(Collectors.toList()));
     }
     model.setProviderId(entity.getT_id());
+    model.setAccountId(entity.getAccount().getT_id());
   }
 }

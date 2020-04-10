@@ -27,9 +27,9 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
     if (exception instanceof SolidException) {
       SolidException solidException = (SolidException) exception;
       exceptionUUID = solidException.getExceptionUUID();
-      _log.error(String.format("[%s] - %s.%s: %s", solidException.getExceptionUUID(),
+      _log.error("[{}] - {}.{}: {}", solidException.getExceptionUUID(),
           solidException.getExceptionClass(), solidException.getMethod(),
-          solidException.getLocalizedMessage()), solidException);
+          solidException.getLocalizedMessage(), solidException);
       status = exceptionToErrorCode.get(solidException.getClass());
     } else {
       _log.error("Unexpected error occured: ", exception);
