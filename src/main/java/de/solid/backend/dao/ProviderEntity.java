@@ -1,13 +1,12 @@
 package de.solid.backend.dao;
 
 import java.util.List;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +14,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/*
+ * entity for provider related data
+ * 
+ */
 @Getter
 @Setter
 @ToString
@@ -25,42 +28,37 @@ import lombok.ToString;
 @Table(name = "solid_provider")
 public class ProviderEntity extends AbstractEntity {
 
-	private String farmName;
+  private String farmName;
 
-	@Lob
-	private byte[] picture;
+  @Lob
+  private byte[] picture;
 
-	private String pictureName;
+  private String pictureName;
 
-	private String contactFirstName;
+  private String crops;
 
-	private String contactLastName;
+  private String url;
 
-	private String email;
+  private int minWorkPeriod;
 
-	private String crops;
+  private float hourlyRate;
 
-	private String url;
+  private boolean pickupPossible;
 
-	private String phone;
+  private int pickupRange;
 
-	private int minWorkPeriod;
+  private boolean overnightPossible;
 
-	private float hourlyRate;
+  private double latitude;
 
-	private boolean pickupPossible;
+  private double longitude;
 
-	private int pickupRange;
+  @OneToOne(cascade = CascadeType.ALL)
+  private AddressEntity address;
 
-	private boolean overnightPossible;
+  @OneToMany(mappedBy = "provider")
+  private List<InquiryEntity> inquiries;
 
-	private double latitude;
-
-	private double longitude;
-
-	@OneToOne
-	private AddressEntity address;
-
-	@OneToMany(mappedBy = "provider")
-	private List<InquiryEntity> inquiries;
+  @OneToOne(cascade = CascadeType.ALL)
+  private AccountEntity account;
 }

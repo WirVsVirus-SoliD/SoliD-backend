@@ -1,11 +1,11 @@
 package de.solid.backend.dao;
 
 import java.util.List;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import de.solid.backend.common.EmploymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +14,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/*
+ * entity for helper related data
+ * 
+ */
 @Getter
 @Setter
 @ToString
@@ -24,25 +28,19 @@ import lombok.ToString;
 @Table(name = "solid_helper")
 public class HelperEntity extends AbstractEntity {
 
-	private String firstName;
+  private EmploymentStatus EmploymentStatus;
 
-	private String lastName;
+  private boolean fullTime;
 
-	private String mobileNumber;
+  private int pickupRange;
 
-	private String email;
+  private boolean driverLicense;
 
-	private EmploymentStatus EmploymentStatus;
+  private boolean pickupRequired;
 
-	private boolean fullTime;
+  @OneToMany(mappedBy = "helper")
+  private List<InquiryEntity> inquiries;
 
-	private int pickupRange;
-
-	private boolean driverLicense;
-
-	private boolean pickupRequired;
-
-	@OneToMany(mappedBy = "helper")
-	private List<InquiryEntity> inquiries;
-
+  @OneToOne(cascade = CascadeType.ALL)
+  private AccountEntity account;
 }
