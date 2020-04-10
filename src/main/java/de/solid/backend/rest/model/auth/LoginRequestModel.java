@@ -1,4 +1,4 @@
-package de.solid.backend.rest.model;
+package de.solid.backend.rest.model.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,13 +7,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * request model for issuing JWT with email and password
+ *
+ */
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquiryRequestModel {
+public class LoginRequestModel {
 
-	private long providerId;
+  private String email;
+
+  private String password;
 }

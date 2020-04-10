@@ -35,6 +35,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-mailer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-oidc</artifactId>
 		</dependency>
 		<dependency>
@@ -99,7 +107,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-       	<finalName>${project.name}</finalName>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>io.quarkus</groupId>

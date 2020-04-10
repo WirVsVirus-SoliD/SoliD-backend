@@ -2,12 +2,21 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-## Running the application in dev mode
+## Configuration
 
-You can run your application in dev mode that enables live coding using:
-```
-./mvnw quarkus:dev
-```
+The following properties must be made available via system environment
+
+### Database configuration (database name: solid)
+pguser - database user  
+pgpasswd - password for database user  
+pghost - database host ip  
+pgport - database host port  
+
+### Security configuration (keycloak client name: solid)
+quarkus.oidc.credentials.secret - keycloak client secret  
+keycloak.server.url - FQDN of keycloak server  
+keycloak.useradmin.login - login for the useradmin account to create keycloak logins  
+keycloak.useradmin.passwd - password for the useradmin account to create keycloak logins  
 
 ## Packaging and running the application
 

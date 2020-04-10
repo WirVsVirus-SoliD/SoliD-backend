@@ -1,8 +1,12 @@
-package de.solid.backend.rest.clients.model;
+package de.solid.backend.clients.model;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/*
+ * response model for issued JWT
+ * 
+ */
 @Getter
 @Setter
 public class KeycloakGetJWTResponseModel {
