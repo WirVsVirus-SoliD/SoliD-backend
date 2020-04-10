@@ -19,6 +19,6 @@ public interface GeocodeRestClient {
   @GET
   @Path("/{address}")
   @Produces(MediaType.APPLICATION_JSON)
-  public GeocodeResponse getLatLong(@PathParam String address);
+  public GeocodeResponse getLatLong(@PathParam("address") String address);
 
 }
