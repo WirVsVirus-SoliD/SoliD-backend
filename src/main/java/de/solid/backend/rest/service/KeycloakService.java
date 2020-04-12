@@ -174,6 +174,15 @@ public class KeycloakService {
     }
   }
 
+  public boolean validateToken(String token) {
+    Map<String, Object> result =
+        this.keycloakRestClient.validateToken(client_id, client_secret, token);
+    if (result.containsKey("active")) {
+      return Boolean.parseBoolean(result.get("active").toString());
+    }
+    return false;
+  }
+
   @CacheResult(cacheName = "adminJWTCache")
   private String getAuthorizationHeaderValue() {
     KeycloakGetJWTResponseModel adminToken = this.getJWTLogin(LoginRequestModel.builder()

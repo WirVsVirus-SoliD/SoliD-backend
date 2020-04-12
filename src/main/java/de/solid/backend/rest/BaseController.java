@@ -34,7 +34,7 @@ public abstract class BaseController {
   }
 
   @Inject
-  private JsonWebToken jwt;
+  protected JsonWebToken jwt;
 
   public String getAuthenticatedUserEmail() {
     return jwt.claim(Claims.email.toString())

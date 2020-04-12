@@ -70,4 +70,11 @@ public interface KeycloakRestClient {
   public List<Map<String, Object>> getUser(@HeaderParam("Authorization") String authorization,
       @PathParam("keycloakuserid") String keycloakUserId);
 
+  @POST
+  @Path("/realms/solid/protocol/openid-connect/token/introspect")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Map<String, Object> validateToken(@FormParam("client_id") String client_id,
+      @FormParam("client_secret") String client_secret, @FormParam("token") String token);
+
 }

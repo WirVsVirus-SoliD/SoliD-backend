@@ -10,12 +10,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.http.HttpStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import de.solid.backend.clients.model.KeycloakGetJWTResponseModel;
+import de.solid.backend.rest.model.auth.JWTResponseModel;
 import de.solid.backend.rest.model.auth.LoginRequestModel;
 import de.solid.backend.rest.model.auth.RefreshRequestModel;
-import de.solid.backend.rest.model.auth.JWTResponseModel;
 import de.solid.backend.rest.service.AccountService;
 import de.solid.backend.rest.service.KeycloakService;
 import de.solid.backend.rest.service.TicketService;
@@ -64,5 +65,16 @@ public class AuthController extends BaseController {
     long relatedAccount = this.ticketService.validateTicket(uuid);
     this.accountService.activateAccount(relatedAccount);
     return HTTP_OK();
+  }
+
+  @Operation(description = "Validates the given JWT")
+  @GET
+  @Path("/validate/{token}")
+  @Transactional
+  public Response validateToken(@PathParam("token") String token) {
+    if (this.keycloakService.validateToken(token)) {
+      return HTTP_OK();
+    }
+    return Response.status(HttpStatus.SC_UNAUTHORIZED).build();
   }
 }
