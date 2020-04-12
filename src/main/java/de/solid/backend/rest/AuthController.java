@@ -69,10 +69,10 @@ public class AuthController extends BaseController {
 
   @Operation(description = "Validates the given JWT")
   @GET
-  @Path("/validate/{token}")
+  @Path("/validate")
   @Transactional
-  public Response validateToken(@PathParam("token") String token) {
-    if (this.keycloakService.validateToken(token)) {
+  public Response validateToken() {
+    if (this.keycloakService.validateToken(this.jwt.getRawToken())) {
       return HTTP_OK();
     }
     return Response.status(HttpStatus.SC_UNAUTHORIZED).build();
