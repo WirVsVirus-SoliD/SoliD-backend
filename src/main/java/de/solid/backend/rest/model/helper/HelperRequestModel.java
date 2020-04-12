@@ -17,11 +17,9 @@ import lombok.ToString;
 @ToString
 public class HelperRequestModel extends BaseRequestModel<HelperRequestModel, HelperEntity> {
 
-  private EmploymentStatus EmploymentStatus;
+  private EmploymentStatus employmentStatus;
 
   private boolean fullTime;
-
-  private int pickupRange;
 
   private boolean driverLicense;
 
