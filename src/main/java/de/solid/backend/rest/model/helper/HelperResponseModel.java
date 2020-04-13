@@ -2,6 +2,7 @@ package de.solid.backend.rest.model.helper;
 
 import de.solid.backend.common.EmploymentStatus;
 import de.solid.backend.dao.HelperEntity;
+import de.solid.backend.rest.model.AccountResponseModel;
 import de.solid.backend.rest.model.BaseResponseModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +19,6 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private long helperId;
 
-  private long accountId;
-
   private String firstName;
 
   private String lastName;
@@ -30,17 +29,23 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private EmploymentStatus EmploymentStatus;
 
-  private boolean fullTime;
+  private Boolean fullTime;
 
-  private int pickupRange;
+  private Boolean partTime;
 
-  private boolean driverLicense;
+  private Integer pickupRange;
 
-  private boolean pickupRequired;
+  private Boolean driverLicense;
+
+  private Boolean pickupRequired;
+
+  private Boolean driverActivity;
+
+  private AccountResponseModel account;
 
   @Override
   protected void mapAdditionalAttributes(HelperResponseModel model, HelperEntity entity) {
     model.setHelperId(entity.getT_id());
-    model.setAccountId(entity.getAccount().getT_id());
+    model.setAccount(new AccountResponseModel().fromEntity(entity.getAccount()));
   }
 }

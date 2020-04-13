@@ -1,25 +1,31 @@
 package de.solid.backend.rest;
 
+import java.util.Map;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.http.HttpStatus;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import de.solid.backend.clients.model.KeycloakGetJWTResponseModel;
+import de.solid.backend.dao.repository.HelpersRepository;
+import de.solid.backend.dao.repository.ProvidersRepository;
 import de.solid.backend.rest.model.auth.JWTResponseModel;
 import de.solid.backend.rest.model.auth.LoginRequestModel;
 import de.solid.backend.rest.model.auth.RefreshRequestModel;
+import de.solid.backend.rest.model.helper.HelperRequestModel;
+import de.solid.backend.rest.model.helper.HelperResponseModel;
+import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import de.solid.backend.rest.service.AccountService;
 import de.solid.backend.rest.service.KeycloakService;
 import de.solid.backend.rest.service.TicketService;
+import de.solid.backend.rest.service.exception.NoSuchEntityException;
 
 @Path("/auth")
 public class AuthController extends BaseController {
@@ -33,6 +39,12 @@ public class AuthController extends BaseController {
   @Inject
   private AccountService accountService;
 
+  @Inject
+  private ProvidersRepository providersRepository;
+
+  @Inject
+  private HelpersRepository helpersRepository;
+
   @Operation(description = "Retrieve a JWT access token via username/password ")
   @POST
   @Path("/login")
@@ -40,9 +52,11 @@ public class AuthController extends BaseController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response login(@RequestBody LoginRequestModel model) {
     KeycloakGetJWTResponseModel response = this.keycloakService.getJWTLogin(model);
+    Object responseModel = this.getResponseObject(response.getAccess_token());
     return HTTP_OK(JWTResponseModel.builder().accessToken(response.getAccess_token())
         .accessTokenExpiresIn(response.getExpires_in()).refreshToken(response.getRefresh_token())
-        .refreshTokenExpiresIn(response.getRefresh_expires_in()).build());
+        .refreshTokenExpiresIn(response.getRefresh_expires_in())
+        .type(this.getModelType(responseModel)).data(responseModel).build());
   }
 
   @Operation(description = "Retrieve a JWT access token via refresh_token")
@@ -52,16 +66,18 @@ public class AuthController extends BaseController {
   @Produces(MediaType.APPLICATION_JSON)
   public Response refresh(@RequestBody RefreshRequestModel model) {
     KeycloakGetJWTResponseModel response = this.keycloakService.getJWTRefresh(model);
+    Object responseModel = this.getResponseObject(response.getAccess_token());
     return HTTP_OK(JWTResponseModel.builder().accessToken(response.getAccess_token())
         .accessTokenExpiresIn(response.getExpires_in()).refreshToken(response.getRefresh_token())
-        .refreshTokenExpiresIn(response.getRefresh_expires_in()).build());
+        .refreshTokenExpiresIn(response.getRefresh_expires_in())
+        .type(this.getModelType(responseModel)).data(responseModel).build());
   }
 
   @Operation(description = "Activates user correlated with given uuid")
   @GET
-  @Path("/activate/{uuid}")
+  @Path("/activate")
   @Transactional
-  public Response activateUser(@PathParam("uuid") String uuid) {
+  public Response activateUser(@QueryParam("token") String uuid) {
     long relatedAccount = this.ticketService.validateTicket(uuid);
     this.accountService.activateAccount(relatedAccount);
     return HTTP_OK();
@@ -70,11 +86,33 @@ public class AuthController extends BaseController {
   @Operation(description = "Validates the given JWT")
   @GET
   @Path("/validate")
+  @Produces(MediaType.APPLICATION_JSON)
   @Transactional
   public Response validateToken() {
-    if (this.keycloakService.validateToken(this.jwt.getRawToken())) {
-      return HTTP_OK();
+    Object responseModel = this.getResponseObject(this.jwt.getRawToken());
+    this.keycloakService.validateToken(this.jwt.getRawToken());
+    return HTTP_OK(Map.of("type", this.getModelType(responseModel), "data", responseModel));
+  }
+
+  private String getModelType(Object model) {
+    if (model instanceof HelperRequestModel) {
+      return "helper";
     }
-    return Response.status(HttpStatus.SC_UNAUTHORIZED).build();
+    return "provider";
+  }
+
+  private Object getResponseObject(String jwt) {
+    String email = this.keycloakService.validateToken(jwt);
+    Object model = null;
+
+    if (this.helpersRepository.findByEmail(email) != null) {
+      model = new HelperResponseModel().fromEntity(this.helpersRepository.findByEmail(email));
+    } else if (this.providersRepository.findByEmail(email) != null) {
+      model = new ProviderResponseModel().fromEntity(this.providersRepository.findByEmail(email));
+    } else {
+      throw new NoSuchEntityException(this.getClass(), "getResponseObject", String
+          .format("Cannot find user with email %s in database!\nPassed in JWT %s", email, jwt));
+    }
+    return model;
   }
 }

@@ -18,6 +18,7 @@ import de.solid.backend.clients.model.KeycloakUserRequestModel.Credentials;
 import de.solid.backend.rest.model.auth.LoginRequestModel;
 import de.solid.backend.rest.model.auth.RefreshRequestModel;
 import de.solid.backend.rest.service.exception.RestClientException;
+import de.solid.backend.rest.service.exception.UnauthorizedException;
 import io.quarkus.cache.CacheResult;
 
 /**
@@ -174,13 +175,14 @@ public class KeycloakService {
     }
   }
 
-  public boolean validateToken(String token) {
+  public String validateToken(String token) {
     Map<String, Object> result =
         this.keycloakRestClient.validateToken(client_id, client_secret, token);
-    if (result.containsKey("active")) {
-      return Boolean.parseBoolean(result.get("active").toString());
+    if (result.containsKey("active") && Boolean.parseBoolean(result.get("active").toString())) {
+      return result.get("email").toString();
     }
-    return false;
+    throw new UnauthorizedException(this.getClass(), "validateToken",
+        String.format("Passed token %s failed keycloak validation", token));
   }
 
   @CacheResult(cacheName = "adminJWTCache")

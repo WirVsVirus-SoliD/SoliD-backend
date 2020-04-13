@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import de.solid.backend.common.Crops;
 import de.solid.backend.dao.ProviderEntity;
+import de.solid.backend.rest.model.AccountResponseModel;
 import de.solid.backend.rest.model.AddressResponseModel;
 import de.solid.backend.rest.model.BaseResponseModel;
 import lombok.Getter;
@@ -23,8 +24,6 @@ public class ProviderResponseModel
 
   private long providerId;
 
-  private long accountId;
-
   private String farmName;
 
   private List<Crops> crops;
@@ -35,23 +34,25 @@ public class ProviderResponseModel
 
   private String minWorkPeriod;
 
-  private float hourlyRate;
+  private Float hourlyRate;
 
-  private boolean pickupPossible;
+  private Boolean pickupPossible;
 
-  private int pickupRange;
+  private Integer pickupRange;
 
-  private boolean overnightPossible;
+  private Boolean overnightPossible;
 
-  private double latitude;
+  private Double latitude;
 
-  private double longitude;
+  private Double longitude;
 
-  private double distance;
+  private Double distance;
 
   private String description;
 
-  private float overnightPrice;
+  private Float overnightPrice;
+
+  private AccountResponseModel account;
 
   @Override
   protected void mapAdditionalAttributes(ProviderResponseModel model, ProviderEntity entity) {
@@ -63,6 +64,6 @@ public class ProviderResponseModel
           .map(v -> Crops.valueOf(v)).collect(Collectors.toList()));
     }
     model.setProviderId(entity.getT_id());
-    model.setAccountId(entity.getAccount().getT_id());
+    model.setAccount(new AccountResponseModel().fromEntity(entity.getAccount()));
   }
 }

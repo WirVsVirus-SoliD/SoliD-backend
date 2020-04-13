@@ -19,13 +19,17 @@ public class HelperRequestModel extends BaseRequestModel<HelperRequestModel, Hel
 
   private EmploymentStatus employmentStatus;
 
-  private boolean fullTime;
+  private Boolean fullTime;
 
-  private boolean driverLicense;
+  private Boolean partTime;
 
-  private boolean pickupRequired;
+  private Boolean driverLicense;
+
+  private Boolean pickupRequired;
 
   private AccountRequestModel account;
+
+  private Boolean driverActivity;
 
   @Override
   protected void mapAdditionalAttributes(HelperEntity entity) {}

@@ -34,11 +34,15 @@ public class HelperEntity extends AbstractEntity {
 
   private Boolean fullTime;
 
+  private Boolean partTime;
+
   private Integer pickupRange;
 
   private Boolean driverLicense;
 
   private Boolean pickupRequired;
+
+  private Boolean driverActivity;
 
   @OneToMany(mappedBy = "helper")
   private List<InquiryEntity> inquiries;

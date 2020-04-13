@@ -27,8 +27,8 @@ public class JWTResponseModel {
 
   private int refreshTokenExpiresIn;
 
-  // provider oder helper
-  private String model_type;
+  // provider or helper
+  private String type;
 
-  private Object model;
+  private Object data;
 }
