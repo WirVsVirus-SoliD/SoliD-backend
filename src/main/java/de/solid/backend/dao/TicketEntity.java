@@ -32,12 +32,12 @@ public class TicketEntity extends AbstractEntity {
   private Date expiresAt;
 
   @Column(name = "related_account")
-  private long relatedAccount;
+  private Long relatedAccount;
 
   @Column(name = "related_account_type")
   private AccountType relatedAccountType;
 
   @Column(name = "ticket_validated")
-  private boolean ticketValidated;
+  private Boolean ticketValidated;
 
 }

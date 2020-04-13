@@ -2,9 +2,7 @@ package de.solid.backend.dao;
 
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -17,6 +15,8 @@ import lombok.ToString;
 
 /*
  * entity for provider related data
+ * 
+ * Hint: primitives are always not null
  * 
  */
 @Getter
@@ -31,44 +31,27 @@ public class ProviderEntity extends AbstractEntity {
 
   private String farmName;
 
-  @Column(nullable = true)
-  @Lob
-  private byte[] picture;
-
-  @Column(nullable = true)
-  private String pictureName;
-
   private String crops;
 
-  @Column(nullable = true)
   private String url;
 
-  @Column(nullable = true)
   private String minWorkPeriod;
 
-  @Column(nullable = true)
-  private float hourlyRate;
+  private Float hourlyRate;
 
-  @Column(nullable = true)
-  private boolean pickupPossible;
+  private Boolean pickupPossible;
 
-  @Column(nullable = true)
-  private int pickupRange;
+  private Integer pickupRange;
 
-  @Column(nullable = true)
-  private boolean overnightPossible;
+  private Boolean overnightPossible;
 
-  @Column(nullable = true)
-  private double latitude;
+  private Double latitude;
 
-  @Column(nullable = true)
-  private double longitude;
+  private Double longitude;
 
-  @Column(nullable = true)
   private String description;
 
-  @Column(nullable = true)
-  private float overnightPrice;
+  private Float overnightPrice;
 
   @OneToOne(cascade = CascadeType.ALL)
   private AddressEntity address;

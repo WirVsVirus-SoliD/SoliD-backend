@@ -2,7 +2,6 @@ package de.solid.backend.dao;
 
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -18,6 +17,8 @@ import lombok.ToString;
 /*
  * entity for helper related data
  * 
+ * Hint: primitives are always not null
+ * 
  */
 @Getter
 @Setter
@@ -29,20 +30,15 @@ import lombok.ToString;
 @Table(name = "solid_helper")
 public class HelperEntity extends AbstractEntity {
 
-  @Column(nullable = true)
   private EmploymentStatus EmploymentStatus;
 
-  @Column(nullable = true)
-  private boolean fullTime;
+  private Boolean fullTime;
 
-  @Column(nullable = true)
-  private int pickupRange;
+  private Integer pickupRange;
 
-  @Column(nullable = true)
-  private boolean driverLicense;
+  private Boolean driverLicense;
 
-  @Column(nullable = true)
-  private boolean pickupRequired;
+  private Boolean pickupRequired;
 
   @OneToMany(mappedBy = "helper")
   private List<InquiryEntity> inquiries;
