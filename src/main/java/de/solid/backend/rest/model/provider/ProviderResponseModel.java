@@ -33,7 +33,7 @@ public class ProviderResponseModel
 
   private String url;
 
-  private int minWorkPeriod;
+  private String minWorkPeriod;
 
   private float hourlyRate;
 
@@ -48,6 +48,10 @@ public class ProviderResponseModel
   private double longitude;
 
   private double distance;
+
+  private String description;
+
+  private float overnightPrice;
 
   @Override
   protected void mapAdditionalAttributes(ProviderResponseModel model, ProviderEntity entity) {

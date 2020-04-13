@@ -28,7 +28,7 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
 
   private String url;
 
-  private int minWorkPeriod;
+  private String minWorkPeriod;
 
   private float hourlyRate;
 
@@ -39,6 +39,10 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
   private boolean overnightPossible;
 
   private AccountRequestModel account;
+
+  private String description;
+
+  private float overnightPrice;
 
   @Override
   protected void mapAdditionalAttributes(ProviderEntity entity) {

@@ -1,6 +1,7 @@
 package de.solid.backend.dao;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
@@ -24,12 +25,15 @@ import lombok.ToString;
 @Table(name = "solid_account")
 public class AccountEntity extends AbstractEntity {
 
+  @Column(nullable = true)
   private String firstName;
 
+  @Column(nullable = true)
   private String lastName;
 
   private String email;
 
+  @Column(nullable = true)
   private String phone;
 
   private String keycloakUserId;

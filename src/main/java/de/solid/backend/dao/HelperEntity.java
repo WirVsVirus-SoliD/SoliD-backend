@@ -2,6 +2,7 @@ package de.solid.backend.dao;
 
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -28,14 +29,19 @@ import lombok.ToString;
 @Table(name = "solid_helper")
 public class HelperEntity extends AbstractEntity {
 
+  @Column(nullable = true)
   private EmploymentStatus EmploymentStatus;
 
+  @Column(nullable = true)
   private boolean fullTime;
 
+  @Column(nullable = true)
   private int pickupRange;
 
+  @Column(nullable = true)
   private boolean driverLicense;
 
+  @Column(nullable = true)
   private boolean pickupRequired;
 
   @OneToMany(mappedBy = "helper")

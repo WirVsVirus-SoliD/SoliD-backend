@@ -16,7 +16,6 @@ import de.solid.backend.dao.repository.TicketRepository;
 import de.solid.backend.rest.service.exception.DuplicateException;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
 import de.solid.backend.rest.service.exception.TimeoutException;
-import io.quarkus.scheduler.Scheduled;
 
 /*
  * provides ticket related operations
@@ -80,7 +79,10 @@ public class TicketService {
         String.format("Ticket with uuid %s could not be validated", uuid));
   }
 
-  @Scheduled(every = "12h")
+  /**
+   * switched of for now
+   */
+  // @Scheduled(every = "12h")
   @Transactional
   public void periodicCleanup() {
     _log.info("Period cleanup for expired and activated tickets started");
@@ -100,7 +102,6 @@ public class TicketService {
           default:
             break;
         }
-
       }
     });
   }
