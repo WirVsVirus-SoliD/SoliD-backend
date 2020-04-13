@@ -88,7 +88,7 @@ public class AccountService {
     }
   }
 
-  private AccountEntity findByEmail(String email) {
+  public AccountEntity findByEmail(String email) {
     AccountEntity entity = this.accountRepository.findByEmail(email);
     if (entity != null) {
       return entity;
