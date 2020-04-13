@@ -38,6 +38,6 @@ public class TicketEntity extends AbstractEntity {
   private AccountType relatedAccountType;
 
   @Column(name = "ticket_validated")
-  private Boolean ticketValidated;
+  private boolean ticketValidated;
 
 }
