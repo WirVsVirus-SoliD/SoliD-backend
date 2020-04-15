@@ -34,12 +34,12 @@ public class GeoJsonFeatureResponseModel
     private String type = "Point";
 
     @NonNull
-    private List<Double> coorodinates;
+    private List<Double> coordinates;
   }
 
   @Override
   protected void mapAdditionalAttributes(GeoJsonFeatureResponseModel model, ProviderEntity entity) {
     model.setProperties(new ProviderResponseModel().fromEntity(entity));
-    model.setGeometry(new Geometry(Arrays.asList(entity.getLatitude(), entity.getLongitude())));
+    model.setGeometry(new Geometry(Arrays.asList(entity.getLongitude(), entity.getLatitude())));
   }
 }
