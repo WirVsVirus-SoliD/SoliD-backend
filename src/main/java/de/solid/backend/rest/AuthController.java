@@ -12,14 +12,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import de.solid.backend.clients.model.KeycloakGetJWTResponseModel;
 import de.solid.backend.dao.repository.HelpersRepository;
 import de.solid.backend.dao.repository.ProvidersRepository;
 import de.solid.backend.rest.model.auth.JWTResponseModel;
 import de.solid.backend.rest.model.auth.LoginRequestModel;
 import de.solid.backend.rest.model.auth.RefreshRequestModel;
-import de.solid.backend.rest.model.helper.HelperRequestModel;
 import de.solid.backend.rest.model.helper.HelperResponseModel;
 import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import de.solid.backend.rest.service.AccountService;
@@ -50,6 +53,12 @@ public class AuthController extends BaseController {
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
+  @APIResponses(value = {@APIResponse(responseCode = "200",
+      description = "returns JWT (access and refresh token) and the logged in model (helper, provider)",
+      content = @Content(mediaType = MediaType.APPLICATION_JSON,
+          schema = @Schema(implementation = JWTResponseModel.class))),
+      @APIResponse(responseCode = "400", description = "invalid media supplied",
+          content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA))})
   public Response login(@RequestBody LoginRequestModel model) {
     KeycloakGetJWTResponseModel response = this.keycloakService.getJWTLogin(model);
     Object responseModel = this.getResponseObject(response.getAccess_token());
@@ -95,7 +104,7 @@ public class AuthController extends BaseController {
   }
 
   private String getModelType(Object model) {
-    if (model instanceof HelperRequestModel) {
+    if (model instanceof HelperResponseModel) {
       return "helper";
     }
     return "provider";
