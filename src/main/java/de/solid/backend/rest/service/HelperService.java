@@ -19,10 +19,10 @@ import de.solid.backend.rest.model.FavoriteRequestModel;
 import de.solid.backend.rest.model.FavoriteResponseModel;
 import de.solid.backend.rest.model.helper.HelperRequestModel;
 import de.solid.backend.rest.model.helper.InquiryRequestModel;
-import de.solid.backend.rest.model.provider.ProviderResponseModel;
+import de.solid.backend.rest.model.helper.InquiryResponseModel;
 import de.solid.backend.rest.service.exception.DuplicateException;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
-import de.solid.backend.rest.service.exception.SolidException;
+import de.solid.backend.rest.service.exception.UnauthorizedException;
 import io.quarkus.mailer.MailTemplate;
 
 /*
@@ -107,11 +107,10 @@ public class HelperService {
     }
   }
 
-  public List<ProviderResponseModel> getProvidersInquiredFor(String authenticatedUserEmail) {
+  public List<InquiryResponseModel> getProvidersInquiredFor(String authenticatedUserEmail) {
     long helperEntityId = getHelperByEmail(authenticatedUserEmail).getT_id();
     List<InquiryEntity> entites = this.inquiriesRepository.findByHelperId(helperEntityId);
-    return entites.stream()
-        .map(entity -> new ProviderResponseModel().fromEntity(entity.getProvider()))
+    return entites.stream().map(entity -> new InquiryResponseModel().fromEntity(entity))
         .collect(Collectors.toList());
   }
 
@@ -180,7 +179,7 @@ public class HelperService {
       if (entity.getHelper().getT_id() == helperEntity.getT_id()) {
         this.favoritesRepository.delete(entity);
       } else {
-        throw new SolidException(this.getClass(), "deleteFavorite",
+        throw new UnauthorizedException(this.getClass(), "deleteFavorite",
             String.format("unauthorized try to remove favorite with id %s for helper with email %s",
                 favoriteId, helperEntity.getT_id()));
       }
@@ -190,6 +189,10 @@ public class HelperService {
               "no favorite entry exists id %s to be removed from favorite by helper with email %s",
               favoriteId, authenticatedUserEmail));
     }
+  }
+
+  public boolean helperExistsForEmail(String email) {
+    return this.helpersRepository.findByEmail(email) != null;
   }
 
   private HelperEntity getHelperByAccountId(long accountId) {

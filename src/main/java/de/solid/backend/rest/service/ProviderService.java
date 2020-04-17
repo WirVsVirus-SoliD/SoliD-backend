@@ -147,6 +147,10 @@ public class ProviderService {
     return new GeoJsonResponseModel(features);
   }
 
+  public boolean providerExistsForEmail(String email) {
+    return this.providersRepository.findByEmail(email) != null;
+  }
+
   private long getProviderIdByEmail(String authenticatedUserEmail) {
     ProviderEntity provider = this.providersRepository.findByEmail(authenticatedUserEmail);
     if (provider != null) {

@@ -17,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import de.solid.backend.clients.model.KeycloakGetJWTResponseModel;
 import de.solid.backend.dao.repository.HelpersRepository;
 import de.solid.backend.dao.repository.ProvidersRepository;
@@ -31,6 +32,7 @@ import de.solid.backend.rest.service.TicketService;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
 
 @Path("/auth")
+@Tag(name = "Authentication", description = "authentication related method")
 public class AuthController extends BaseController {
 
   @Inject
@@ -57,8 +59,7 @@ public class AuthController extends BaseController {
       description = "returns JWT (access and refresh token) and the logged in model (helper, provider)",
       content = @Content(mediaType = MediaType.APPLICATION_JSON,
           schema = @Schema(implementation = JWTResponseModel.class))),
-      @APIResponse(responseCode = "400", description = "invalid media supplied",
-          content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA))})
+      @APIResponse(responseCode = "403", description = "invalid credentials supplied")})
   public Response login(@RequestBody LoginRequestModel model) {
     KeycloakGetJWTResponseModel response = this.keycloakService.getJWTLogin(model);
     Object responseModel = this.getResponseObject(response.getAccess_token());
@@ -73,6 +74,11 @@ public class AuthController extends BaseController {
   @Path("/refresh")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
+  @APIResponses(value = {@APIResponse(responseCode = "200",
+      description = "returns JWT (access and refresh token) and the logged in model (helper, provider)",
+      content = @Content(mediaType = MediaType.APPLICATION_JSON,
+          schema = @Schema(implementation = JWTResponseModel.class))),
+      @APIResponse(responseCode = "403", description = "invalid refresh token supplied")})
   public Response refresh(@RequestBody RefreshRequestModel model) {
     KeycloakGetJWTResponseModel response = this.keycloakService.getJWTRefresh(model);
     Object responseModel = this.getResponseObject(response.getAccess_token());
@@ -82,10 +88,16 @@ public class AuthController extends BaseController {
         .type(this.getModelType(responseModel)).data(responseModel).build());
   }
 
-  @Operation(description = "Activates user correlated with given uuid")
+  @Operation(description = "Activates account correlated with given uuid")
   @GET
   @Path("/activate")
   @Transactional
+  @APIResponses(
+      value = {@APIResponse(responseCode = "200", description = "account successfully activated"),
+          @APIResponse(responseCode = "404",
+              description = "activation ticket for given uuid cannot be found"),
+          @APIResponse(responseCode = "408", description = "activation ticket expired"),
+          @APIResponse(responseCode = "409", description = "account already activated")})
   public Response activateUser(@QueryParam("token") String uuid) {
     long relatedAccount = this.ticketService.validateTicket(uuid);
     this.accountService.activateAccount(relatedAccount);
@@ -97,6 +109,14 @@ public class AuthController extends BaseController {
   @Path("/validate")
   @Produces(MediaType.APPLICATION_JSON)
   @Transactional
+  @APIResponses(
+      value = {
+          @APIResponse(responseCode = "200",
+              description = "JWT validated, returns either helper or provider model",
+              content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                  schema = @Schema(
+                      anyOf = {HelperResponseModel.class, ProviderResponseModel.class}))),
+          @APIResponse(responseCode = "403", description = "JWT is invalid")})
   public Response validateToken() {
     Object responseModel = this.getResponseObject(this.jwt.getRawToken());
     this.keycloakService.validateToken(this.jwt.getRawToken());

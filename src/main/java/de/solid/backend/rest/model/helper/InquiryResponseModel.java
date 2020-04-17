@@ -1,9 +1,9 @@
-package de.solid.backend.rest.model.provider;
+package de.solid.backend.rest.model.helper;
 
 import java.util.Date;
 import de.solid.backend.dao.InquiryEntity;
 import de.solid.backend.rest.model.BaseResponseModel;
-import de.solid.backend.rest.model.helper.HelperResponseModel;
+import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,19 +19,16 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
 
   private long inquiryId;
 
-  private HelperResponseModel helper;
+  private ProviderResponseModel provider;
 
   private Date applyDate;
 
   private boolean contacted;
 
-  private Date contactedDate;
-
   @Override
   protected void mapAdditionalAttributes(InquiryResponseModel model, InquiryEntity entity) {
     model.setInquiryId(entity.getT_id());
     model.setApplyDate(entity.getT_dateCreated());
-    model.setContactedDate(entity.getT_dateChanged());
-    model.setHelper(new HelperResponseModel().fromEntity(entity.getHelper()));
+    model.setProvider(new ProviderResponseModel().fromEntity(entity.getProvider()));
   }
 }

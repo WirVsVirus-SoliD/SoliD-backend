@@ -1,4 +1,4 @@
-package de.solid.backend.rest;
+package de.solid.backend.rest.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.MediaEntity;
 import de.solid.backend.dao.repository.AccountRepository;
-import de.solid.backend.rest.service.AccountService;
 import de.solid.backend.rest.service.exception.RequiredArgumentException;
 import de.solid.backend.rest.service.exception.SolidException;
 

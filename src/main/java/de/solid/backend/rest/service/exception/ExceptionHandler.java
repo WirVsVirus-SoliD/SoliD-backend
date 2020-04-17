@@ -37,8 +37,8 @@ public class ExceptionHandler implements ExceptionMapper<Throwable> {
     return Response.status(status).entity(exceptionUUID).build();
   }
 
-  private Map<Class<?>, Integer> exceptionToErrorCode =
-      Map.of(NoSuchEntityException.class, HttpStatus.SC_NOT_FOUND, TimeoutException.class,
-          HttpStatus.SC_REQUEST_TIMEOUT, DuplicateException.class, HttpStatus.SC_CONFLICT,
-          RequiredArgumentException.class, HttpStatus.SC_BAD_REQUEST);
+  private Map<Class<?>, Integer> exceptionToErrorCode = Map.of(NoSuchEntityException.class,
+      HttpStatus.SC_NOT_FOUND, TimeoutException.class, HttpStatus.SC_REQUEST_TIMEOUT,
+      DuplicateException.class, HttpStatus.SC_CONFLICT, RequiredArgumentException.class,
+      HttpStatus.SC_BAD_REQUEST, UnauthorizedException.class, HttpStatus.SC_FORBIDDEN);
 }
