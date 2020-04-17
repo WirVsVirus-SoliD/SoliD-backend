@@ -25,12 +25,12 @@ import de.solid.backend.rest.service.InquiryService;
 import de.solid.backend.rest.service.ProviderService;
 import io.quarkus.security.Authenticated;
 
-@Path("/inquire")
+@Path("/inquiries")
 @Authenticated
-@Tag(name = "Inquiry", description = "methods to handle inquiries")
-public class InquiryController extends BaseController {
+@Tag(name = "Inquiries", description = "methods to handle inquiries")
+public class InquiriesController extends BaseController {
 
-  private static final Logger _log = LoggerFactory.getLogger(InquiryController.class);
+  private static final Logger _log = LoggerFactory.getLogger(InquiriesController.class);
 
   @Inject
   private HelperService helperService;
