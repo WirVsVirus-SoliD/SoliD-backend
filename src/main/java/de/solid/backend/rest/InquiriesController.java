@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -20,6 +22,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import de.solid.backend.rest.model.helper.InquiryRequestModel;
+import de.solid.backend.rest.model.helper.InquiryResponseModel;
 import de.solid.backend.rest.service.HelperService;
 import de.solid.backend.rest.service.InquiryService;
 import de.solid.backend.rest.service.ProviderService;
@@ -64,7 +67,11 @@ public class InquiriesController extends BaseController {
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
-  @APIResponses(value = {@APIResponse(responseCode = "200", description = "list of inquiries"),
+  @APIResponses(value = {
+      @APIResponse(responseCode = "200", description = "list of inquiries",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON,
+              schema = @Schema(oneOf = {InquiryResponseModel.class,
+                  de.solid.backend.rest.model.provider.InquiryResponseModel.class}))),
       @APIResponse(responseCode = "404",
           description = "helper or provider with account from jwt not found")})
   public Response getInquiries() {
