@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import de.solid.backend.rest.model.provider.GeoJsonResponseModel;
 import de.solid.backend.rest.model.provider.ProviderRequestModel;
+import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import de.solid.backend.rest.service.ProviderService;
 import io.quarkus.security.Authenticated;
 
@@ -54,15 +55,18 @@ public class ProvidersController extends BaseController {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @APIResponses(value = {
-      @APIResponse(responseCode = "200", description = "provider successfully updated"),
+      @APIResponse(responseCode = "200",
+          description = "provider successfully updated, return model",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON,
+              schema = @Schema(implementation = ProviderResponseModel.class))),
       @APIResponse(responseCode = "400",
           description = "required argument email not set (in case of email update)"),
       @APIResponse(responseCode = "404", description = "provider with account from jwt not found"),
       @APIResponse(responseCode = "409", description = "email to update already exists")})
   public Response updateProvider(@RequestBody ProviderRequestModel providerRequestModel) {
     _log.info("updateProvider was called for provider with email {}", getAuthenticatedUserEmail());
-    this.providerService.updateProvider(providerRequestModel, getAuthenticatedUserEmail());
-    return HTTP_OK();
+    return HTTP_OK(
+        this.providerService.updateProvider(providerRequestModel, getAuthenticatedUserEmail()));
   }
 
   @Operation(description = "delete provider")

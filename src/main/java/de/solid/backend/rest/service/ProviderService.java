@@ -24,6 +24,7 @@ import de.solid.backend.rest.model.provider.GeoJsonFeatureResponseModel;
 import de.solid.backend.rest.model.provider.GeoJsonResponseModel;
 import de.solid.backend.rest.model.provider.InquiryResponseModel;
 import de.solid.backend.rest.model.provider.ProviderRequestModel;
+import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
 import de.solid.backend.rest.service.exception.RestClientException;
 import io.quarkus.mailer.MailTemplate;
@@ -67,7 +68,8 @@ public class ProviderService {
   }
 
   @Transactional
-  public void updateProvider(ProviderRequestModel model, String authenticatedUserEmail) {
+  public ProviderResponseModel updateProvider(ProviderRequestModel model,
+      String authenticatedUserEmail) {
     AccountEntity account =
         this.accountService.updateAccount(model.getAccount(), authenticatedUserEmail);
     ProviderEntity provider = this.getProviderByAccountId(account.getT_id());
@@ -76,6 +78,7 @@ public class ProviderService {
       this.retrieveLatLong(model.getAddress(), provider);
     }
     this.providersRepository.persist(provider);
+    return new ProviderResponseModel().fromEntity(provider);
   }
 
   @Transactional

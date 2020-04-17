@@ -18,6 +18,7 @@ import de.solid.backend.dao.repository.ProvidersRepository;
 import de.solid.backend.rest.model.FavoriteRequestModel;
 import de.solid.backend.rest.model.FavoriteResponseModel;
 import de.solid.backend.rest.model.helper.HelperRequestModel;
+import de.solid.backend.rest.model.helper.HelperResponseModel;
 import de.solid.backend.rest.model.helper.InquiryRequestModel;
 import de.solid.backend.rest.model.helper.InquiryResponseModel;
 import de.solid.backend.rest.service.exception.DuplicateException;
@@ -65,12 +66,13 @@ public class HelperService {
   }
 
   @Transactional
-  public void updateHelper(HelperRequestModel model, String authenticatedUserEmail) {
+  public HelperResponseModel updateHelper(HelperRequestModel model, String authenticatedUserEmail) {
     AccountEntity account =
         this.accountService.updateAccount(model.getAccount(), authenticatedUserEmail);
     HelperEntity helper = this.getHelperByAccountId(account.getT_id());
     helper = model.toEntity(helper);
     this.helpersRepository.persist(helper);
+    return new HelperResponseModel().fromEntity(helper);
   }
 
   @Transactional
@@ -115,7 +117,8 @@ public class HelperService {
   }
 
   @Transactional
-  public void inquireForProvider(InquiryRequestModel model, String authenticatedUserEmail) {
+  public InquiryResponseModel inquireForProvider(InquiryRequestModel model,
+      String authenticatedUserEmail) {
     HelperEntity helperEntity = this.getHelperByEmail(authenticatedUserEmail);
     ProviderEntity providerEntity = this.providerRepository.findById(model.getProviderId());
     if (providerEntity != null) {
@@ -126,6 +129,7 @@ public class HelperService {
         entity.setHelper(helperEntity);
         entity.setProvider(providerEntity);
         this.inquiriesRepository.persist(entity);
+        return new InquiryResponseModel().fromEntity(entity);
       } else {
         throw new DuplicateException(this.getClass(), "inquireForProvider",
             String.format("helper with email %s already inquired for provider with id %s",
@@ -146,7 +150,8 @@ public class HelperService {
   }
 
   @Transactional
-  public void markFavorite(FavoriteRequestModel model, String authenticatedUserEmail) {
+  public FavoriteResponseModel markFavorite(FavoriteRequestModel model,
+      String authenticatedUserEmail) {
     HelperEntity helperEntity = this.getHelperByEmail(authenticatedUserEmail);
     ProviderEntity providerEntity = this.providerRepository.findById(model.getProviderId());
     if (providerEntity != null) {
@@ -157,6 +162,7 @@ public class HelperService {
         fe.setHelper(helperEntity);
         fe.setProvider(providerEntity);
         this.favoritesRepository.persist(fe);
+        return new FavoriteResponseModel().fromEntity(fe);
       } else {
         throw new DuplicateException(this.getClass(), "markFavorite",
             String.format(

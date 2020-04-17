@@ -51,15 +51,16 @@ public class InquiriesController extends BaseController {
   @Consumes(MediaType.APPLICATION_JSON)
   @APIResponses(value = {
       @APIResponse(responseCode = "200",
-          description = "successfully inquired user for given helper"),
+          description = "successfully inquired user for given helper, return model",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON,
+              schema = @Schema(implementation = InquiryResponseModel.class))),
       @APIResponse(responseCode = "404", description = "helper with account from jwt not found"),
       @APIResponse(responseCode = "409",
           description = "helper with account from jwt already inquired for given provider")})
   public Response inquireForProvider(@RequestBody InquiryRequestModel model) {
     _log.info("inquireForProvider was called for account with email {}",
         getAuthenticatedUserEmail());
-    this.helperService.inquireForProvider(model, getAuthenticatedUserEmail());
-    return HTTP_OK();
+    return HTTP_OK(this.helperService.inquireForProvider(model, getAuthenticatedUserEmail()));
   }
 
   @Operation(

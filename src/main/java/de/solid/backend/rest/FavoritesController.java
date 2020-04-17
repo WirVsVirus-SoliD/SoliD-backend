@@ -38,7 +38,10 @@ public class FavoritesController extends BaseController {
   @Consumes(MediaType.APPLICATION_JSON)
   @Transactional
   @APIResponses(value = {
-      @APIResponse(responseCode = "200", description = "successfully marked as favorite"),
+      @APIResponse(responseCode = "200",
+          description = "successfully marked as favorite, return model",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON,
+              schema = @Schema(implementation = FavoriteResponseModel.class))),
       @APIResponse(responseCode = "404", description = "helper with account from jwt not found"),
       @APIResponse(responseCode = "409",
           description = "provider is already marked as favorite for helper with account from jwt")})
