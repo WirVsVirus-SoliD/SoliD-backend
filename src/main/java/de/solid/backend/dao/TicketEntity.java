@@ -4,6 +4,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import de.solid.backend.common.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +30,7 @@ public class TicketEntity extends AbstractEntity {
 
   private String uuid;
 
+  @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "expires_at")
   private Date expiresAt;
 

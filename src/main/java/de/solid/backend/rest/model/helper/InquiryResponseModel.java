@@ -1,6 +1,7 @@
 package de.solid.backend.rest.model.helper;
 
 import java.util.Date;
+import javax.json.bind.annotation.JsonbDateFormat;
 import de.solid.backend.dao.InquiryEntity;
 import de.solid.backend.rest.model.BaseResponseModel;
 import de.solid.backend.rest.model.provider.ProviderResponseModel;
@@ -21,6 +22,7 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
 
   private ProviderResponseModel provider;
 
+  @JsonbDateFormat(value = RESPONSE_DATE_FORMAT)
   private Date applyDate;
 
   private boolean contacted;

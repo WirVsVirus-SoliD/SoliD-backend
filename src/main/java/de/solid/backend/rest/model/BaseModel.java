@@ -9,6 +9,8 @@ import de.solid.backend.rest.service.exception.SolidException;
  */
 public abstract class BaseModel {
 
+  public static final String RESPONSE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
   public void copyProperties(Object from, Object to) {
     try {
       BeanUtils.copyProperties(from, to);

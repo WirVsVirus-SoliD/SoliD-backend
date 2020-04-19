@@ -1,6 +1,7 @@
 package de.solid.backend.rest.model;
 
 import java.util.Date;
+import javax.json.bind.annotation.JsonbDateFormat;
 import de.solid.backend.dao.FavoriteEntity;
 import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class FavoriteResponseModel
 
   private ProviderResponseModel provider;
 
+  @JsonbDateFormat(value = RESPONSE_DATE_FORMAT)
   private Date markedDate;
 
   @Override
