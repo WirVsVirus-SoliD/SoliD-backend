@@ -26,9 +26,11 @@ public class TicketService {
 
   private static final Logger _log = LoggerFactory.getLogger(TicketService.class);
 
+  @ConfigProperty(name = "ticket.activation.timeout.hours")
+  private int activationTimeoutHours;
 
-  @ConfigProperty(name = "ticket.timeout.hours")
-  private int timeoutHours;
+  @ConfigProperty(name = "ticket.password.reset.timeout.mins")
+  private int passwordResetMins;
 
   @Inject
   private TicketRepository ticketRepository;
@@ -39,20 +41,38 @@ public class TicketService {
   @Inject
   private ProviderService providerService;
 
+  public String createAccountResetTicket(long relatedAccount) {
+    String uuid = UUID.randomUUID().toString();
+    this.ticketRepository.persist(
+        TicketEntity.builder().relatedAccount(relatedAccount).uuid(uuid).ticketValidated(false)
+            .expiresAt(DateUtils.addMinutes(new Date(), passwordResetMins)).build());
+    return uuid;
+  }
+
   @Transactional
-  public String createTicket(long relatedAccount, AccountType type) {
+  public String createRegisterProviderTicket(long relatedAccount) {
     String uuid = UUID.randomUUID().toString();
     this.ticketRepository.persist(TicketEntity.builder().relatedAccount(relatedAccount).uuid(uuid)
-        .relatedAccountType(type).ticketValidated(false)
-        .expiresAt(DateUtils.addHours(new Date(), timeoutHours)).build());
+        .relatedAccountType(AccountType.Provider).ticketValidated(false)
+        .expiresAt(DateUtils.addHours(new Date(), activationTimeoutHours)).build());
+    return uuid;
+  }
+
+  @Transactional
+  public String createHelperRegistrationTicket(long relatedAccount, Long visitedProvider) {
+    String uuid = UUID.randomUUID().toString();
+    this.ticketRepository.persist(TicketEntity.builder().relatedAccount(relatedAccount).uuid(uuid)
+        .visitedProvider(visitedProvider).relatedAccountType(AccountType.Helper)
+        .ticketValidated(false).expiresAt(DateUtils.addHours(new Date(), activationTimeoutHours))
+        .build());
     return uuid;
   }
 
   /**
-   * validate if ticket is valid and return related email
+   * validate if ticket is valid and return related account
    * 
    * @param uuid
-   * @return related email
+   * @return related accountId
    * @throws TimeoutException
    */
   @Transactional

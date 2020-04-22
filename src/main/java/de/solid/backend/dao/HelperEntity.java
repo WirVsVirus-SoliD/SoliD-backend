@@ -42,6 +42,7 @@ public class HelperEntity extends AbstractEntity {
 
   private Boolean pickupRequired;
 
+  // helper can do activities with driving prerequisites
   private Boolean driverActivity;
 
   @OneToMany(mappedBy = "helper")

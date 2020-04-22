@@ -1,6 +1,7 @@
 package de.solid.backend.clients.model;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -27,6 +28,8 @@ public class KeycloakUserRequestModel {
   private String lastName;
 
   private List<Credentials> credentials;
+
+  private Map<String, Object> attributes;
 
   @Getter
   @Setter

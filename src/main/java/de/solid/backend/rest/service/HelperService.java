@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import de.solid.backend.common.AccountType;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.FavoriteEntity;
 import de.solid.backend.dao.HelperEntity;
@@ -54,15 +54,25 @@ public class HelperService {
   @Inject
   private MailTemplate helperActivationMail;
 
+  @ConfigProperty(name = "ticket.activation.url")
+  private String ticketActivationUrl;
+
   @Transactional
   public void registerHelper(HelperRequestModel model) {
     AccountEntity account = this.accountService.createAccount(model.getAccount());
     HelperEntity helper = model.toEntity(null);
     helper.setAccount(account);
     this.helpersRepository.persist(helper);
-    String uuid = this.ticketService.createTicket(account.getT_id(), AccountType.Helper);
+    String uuid = this.ticketService.createHelperRegistrationTicket(account.getT_id(),
+        model.getVisitedProvider());
+    String tau = this.ticketActivationUrl.replace("{uuid}", uuid);
+    if (model.getVisitedProvider() != null) {
+      tau += "&provider=" + model.getVisitedProvider();
+    }
     this.helperActivationMail.to(model.getAccount().getEmail())
-        .data("firstName", model.getAccount().getFirstName()).data("uuid", uuid).send();
+        .subject("soliD - Registrierung abschließen")
+        .data("firstName", model.getAccount().getFirstName()).data("ticketActivationUrl", tau)
+        .send();
   }
 
   @Transactional

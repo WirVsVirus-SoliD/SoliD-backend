@@ -43,4 +43,7 @@ public class TicketEntity extends AbstractEntity {
   @Column(name = "ticket_validated")
   private boolean ticketValidated;
 
+  @Column(name = "visited_provider")
+  private Long visitedProvider;
+
 }

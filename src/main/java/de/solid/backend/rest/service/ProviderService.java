@@ -6,13 +6,10 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
-import de.solid.backend.clients.GeocodeRestClient;
-import de.solid.backend.clients.model.GeocodeResponse;
-import de.solid.backend.common.AccountType;
 import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.AddressEntity;
 import de.solid.backend.dao.InquiryEntity;
@@ -26,8 +23,8 @@ import de.solid.backend.rest.model.provider.InquiryResponseModel;
 import de.solid.backend.rest.model.provider.ProviderRequestModel;
 import de.solid.backend.rest.model.provider.ProviderResponseModel;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
-import de.solid.backend.rest.service.exception.RestClientException;
 import io.quarkus.mailer.MailTemplate;
+import io.vertx.mutiny.core.eventbus.EventBus;
 
 /*
  * provides provider related operations
@@ -52,19 +49,23 @@ public class ProviderService {
   private MailTemplate helperActivationMail;
 
   @Inject
-  @RestClient
-  private GeocodeRestClient geocodeRestClient;
+  private EventBus bus;
+
+  @ConfigProperty(name = "ticket.activation.url")
+  private String ticketActivationUrl;
 
   @Transactional
   public void insertProvider(ProviderRequestModel model) {
     AccountEntity account = this.accountService.createAccount(model.getAccount());
     ProviderEntity provider = model.toEntity(null);
-    this.retrieveLatLong(model.getAddress(), provider);
     provider.setAccount(account);
     this.providersRepository.persist(provider);
-    String uuid = this.ticketService.createTicket(account.getT_id(), AccountType.Provider);
-    this.helperActivationMail.to(model.getAccount().getEmail())
-        .data("firstName", model.getAccount().getFirstName()).data("uuid", uuid).send();
+    this.resolveLatLongAsync(provider.getT_id());
+    String uuid = this.ticketService.createRegisterProviderTicket(account.getT_id());
+    String tau = this.ticketActivationUrl.replace("{uuid}", uuid);
+    this.helperActivationMail.to(model.getAccount().getEmail()).subject("Registrierung abschließen")
+        .data("firstName", model.getAccount().getFirstName()).data("ticketActivationUrl", tau)
+        .send();
   }
 
   @Transactional
@@ -75,7 +76,7 @@ public class ProviderService {
     ProviderEntity provider = this.getProviderByAccountId(account.getT_id());
     provider = model.toEntity(provider);
     if (!addressIsSame(model.getAddress(), provider.getAddress())) {
-      this.retrieveLatLong(model.getAddress(), provider);
+      this.resolveLatLongAsync(provider.getT_id());
     }
     this.providersRepository.persist(provider);
     return new ProviderResponseModel().fromEntity(provider);
@@ -179,20 +180,12 @@ public class ProviderService {
         && model.getHousenr().equals(entity.getHousenr()) && model.getZip().equals(entity.getZip());
   }
 
-  private void retrieveLatLong(AddressRequestModel address, ProviderEntity entity) {
-    GeocodeResponse geocodeCallResult =
-        this.geocodeRestClient.getLatLong(address.getGeocodeRequestParam());
-    if (geocodeCallResult.getError() != null) {
-      throw new RestClientException(this.getClass(), "retrieveLtLong", String
-          .format("Cannot retrieve lat and long for address %s: %s", address, geocodeCallResult));
-    } else {
-      entity.setLatitude(geocodeCallResult.getLatt());
-      entity.setLongitude(geocodeCallResult.getLongt());
-    }
-  }
-
   private double calculateDistance(ProviderEntity entity, double latitude, double longitude) {
     return LatLngTool.distance(new LatLng(entity.getLatitude(), entity.getLongitude()),
         new LatLng(latitude, longitude), LengthUnit.KILOMETER);
+  }
+
+  private void resolveLatLongAsync(Long providerId) {
+    bus.sendAndForget("geojson", providerId);
   }
 }

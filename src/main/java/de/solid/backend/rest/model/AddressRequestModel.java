@@ -24,17 +24,4 @@ public class AddressRequestModel extends BaseRequestModel<AddressRequestModel, A
 
   @Override
   protected void mapAdditionalAttributes(AddressEntity entityl) {}
-
-  public String getGeocodeRequestParam() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(getStreet());
-    buffer.append("+");
-    buffer.append(getHousenr());
-    buffer.append("+");
-    buffer.append(getZip());
-    buffer.append("+");
-    buffer.append(getCity());
-
-    return buffer.toString();
-  }
 }

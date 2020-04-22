@@ -97,6 +97,27 @@ public class KeycloakService {
   }
 
   /**
+   * update the given keycloak user - set the solid-account id to allow relation of solid-account
+   * <-> keycloak-user from bother sides
+   * 
+   * @param accountId
+   * @param keycloakUserId
+   */
+  public void setAccountId(Long accountId, String keycloakUserId) {
+    KeycloakUserRequestModel model =
+        KeycloakUserRequestModel.builder().attributes(Map.of("accountId", accountId)).build();
+    Response response =
+        this.keycloakRestClient.updateUser(getAuthorizationHeaderValue(), keycloakUserId, model);
+    if (HttpStatus.SC_NO_CONTENT != response.getStatus()) {
+      throw new RestClientException(this.getClass(), "setAccountId", String.format(
+          "for user with keycloakId %s accountId could not be updated - got response from keycloak %s",
+          keycloakUserId, response.getStatus()));
+    }
+    _log.info(
+        String.format("Successfully updated keycloak user with keycloakUserId %s", keycloakUserId));
+  }
+
+  /**
    * update keycloak user with given data
    * 
    * @param firstName

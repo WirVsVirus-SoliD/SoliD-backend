@@ -1,7 +1,9 @@
 package de.solid.backend.rest.service;
 
+import java.util.Date;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.repository.AccountRepository;
@@ -24,6 +26,14 @@ public class AccountService {
   @Inject
   private AccountRepository accountRepository;
 
+  @Transactional
+  public void resetPassword(long accountId, String newPassword) {
+    AccountEntity entity = this.accountRepository.findById(accountId);
+    entity.setLastPasswordReset(new Date());
+    this.accountRepository.persist(entity);
+    this.keycloakService.updateUser(entity.getKeycloakUserId(), null, null, null, newPassword);
+  }
+
   public AccountEntity createAccount(AccountRequestModel model) {
     this.checkEmailValid(model.getEmail());
     model.setEmail(model.getEmail().toLowerCase());
@@ -33,6 +43,7 @@ public class AccountService {
     AccountEntity entity = model.toEntity(null);
     entity.setKeycloakUserId(keycloakId);
     this.accountRepository.persist(entity);
+    this.keycloakService.setAccountId(entity.getT_id(), keycloakId);
     return entity;
   }
 

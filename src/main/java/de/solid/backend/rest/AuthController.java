@@ -1,6 +1,7 @@
 package de.solid.backend.rest;
 
 import java.util.Map;
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -11,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -19,10 +21,12 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import de.solid.backend.clients.model.KeycloakGetJWTResponseModel;
+import de.solid.backend.dao.AccountEntity;
 import de.solid.backend.dao.repository.HelpersRepository;
 import de.solid.backend.dao.repository.ProvidersRepository;
 import de.solid.backend.rest.model.auth.JWTResponseModel;
 import de.solid.backend.rest.model.auth.LoginRequestModel;
+import de.solid.backend.rest.model.auth.PasswordResetRequestModel;
 import de.solid.backend.rest.model.auth.RefreshRequestModel;
 import de.solid.backend.rest.model.helper.HelperResponseModel;
 import de.solid.backend.rest.model.provider.ProviderResponseModel;
@@ -30,6 +34,7 @@ import de.solid.backend.rest.service.AccountService;
 import de.solid.backend.rest.service.KeycloakService;
 import de.solid.backend.rest.service.TicketService;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
+import io.quarkus.mailer.MailTemplate;
 
 @Path("/auth")
 @Tag(name = "Authentication", description = "authentication related method")
@@ -50,7 +55,54 @@ public class AuthController extends BaseController {
   @Inject
   private HelpersRepository helpersRepository;
 
-  @Operation(description = "Retrieve a JWT access token via username/password ")
+  @ConfigProperty(name = "ticket.password.reset.url")
+  private String passwordResetUrl;
+
+  @Inject
+  private MailTemplate passwordResetMail;
+
+
+  @Operation(
+      description = "reset password using given values for the account related to ticket with given uuid")
+  @POST
+  @Path("/reset")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @APIResponses(
+      value = {@APIResponse(responseCode = "200", description = "password reset successfully"),
+          @APIResponse(responseCode = "404", description = "user with email to reset not found"),
+          @APIResponse(responseCode = "408", description = "reset ticket expired"),
+          @APIResponse(responseCode = "409",
+              description = "account password was already reset using this tickets")})
+  @PermitAll
+  @Transactional
+  public Response reset(@RequestBody PasswordResetRequestModel model) {
+    long accountId = this.ticketService.validateTicket(model.getUuid());
+    this.accountService.resetPassword(accountId, model.getPassword());
+    return HTTP_OK();
+  }
+
+
+  @Operation(description = "initialize password reset workflow")
+  @GET
+  @Path("/init-reset")
+  @APIResponses(value = {
+      @APIResponse(responseCode = "200", description = "password reset successfully initialized"),
+      @APIResponse(responseCode = "404", description = "user with email to reset not found")})
+  @PermitAll
+  @Transactional
+  public Response initReset(@QueryParam("email") String email) {
+    AccountEntity account = this.accountService.findByEmail(email);
+    if (account != null) {
+      String uuid = this.ticketService.createAccountResetTicket(account.getT_id());
+      this.passwordResetMail.to(account.getEmail()).data("firstName", account.getFirstName())
+          .subject("soliD - Passwort vergessen")
+          .data("passwordResetUrl", passwordResetUrl.replace("{uuid}", uuid)).send();
+      return HTTP_OK();
+    }
+    return HTTP_NOT_FOUND();
+  }
+
+  @Operation(description = "Retrieve a JWT access token via username/password")
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
