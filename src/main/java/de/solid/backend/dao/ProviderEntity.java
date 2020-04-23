@@ -49,9 +49,19 @@ public class ProviderEntity extends AbstractEntity {
 
   private Double longitude;
 
-  private String description;
+  private String workingConditions;
+
+  private String overnightInformation;
+
+  private String providingInformation;
+
+  private String languages;
+
+  private String otherInformation;
 
   private Float overnightPrice;
+
+  private String workActivities;
 
   @OneToOne(cascade = CascadeType.ALL)
   private AddressEntity address;

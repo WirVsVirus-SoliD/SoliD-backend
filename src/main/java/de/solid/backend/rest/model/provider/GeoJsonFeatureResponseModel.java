@@ -22,7 +22,7 @@ public class GeoJsonFeatureResponseModel
 
   private String type = "Feature";
 
-  private ProviderResponseModel properties;
+  private PublicProviderResponseModel properties;
 
   private Geometry geometry;
 
@@ -39,7 +39,7 @@ public class GeoJsonFeatureResponseModel
 
   @Override
   protected void mapAdditionalAttributes(GeoJsonFeatureResponseModel model, ProviderEntity entity) {
-    model.setProperties(new ProviderResponseModel().fromEntity(entity));
+    model.setProperties(new PublicProviderResponseModel().fromEntity(entity));
     model.setGeometry(new Geometry(Arrays.asList(entity.getLongitude(), entity.getLatitude())));
   }
 }

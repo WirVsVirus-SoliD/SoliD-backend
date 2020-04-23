@@ -48,9 +48,13 @@ public class AccountService {
   }
 
   public AccountEntity updateAccount(AccountRequestModel model, String authenticatedUserEmail) {
-    this.checkEmailValid(model.getEmail());
-    model.setEmail(model.getEmail().toLowerCase());
-    this.checkForExistingEmail(model.getEmail());
+    if (model.getEmail() != null) {
+      this.checkEmailValid(model.getEmail());
+      model.setEmail(model.getEmail().toLowerCase());
+      this.checkForExistingEmail(model.getEmail());
+    } else {
+      model.setEmail(authenticatedUserEmail);
+    }
     AccountEntity entity = this.findByEmail(authenticatedUserEmail);
     entity = model.toEntity(entity);
     this.accountRepository.persist(entity);

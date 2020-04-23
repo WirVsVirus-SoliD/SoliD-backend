@@ -186,6 +186,6 @@ public class ProviderService {
   }
 
   private void resolveLatLongAsync(Long providerId) {
-    bus.sendAndForget("geojson", providerId);
+    bus.sendAndForget("geocode", providerId);
   }
 }

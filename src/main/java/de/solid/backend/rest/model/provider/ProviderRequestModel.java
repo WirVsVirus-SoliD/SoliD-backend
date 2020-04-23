@@ -40,15 +40,29 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
 
   private AccountRequestModel account;
 
-  private String description;
+  private String workingConditions;
+
+  private String overnightInformation;
+
+  private String providingInformation;
+
+  private String languages;
+
+  private String otherInformation;
 
   private float overnightPrice;
+
+  private List<String> workActivities;
 
   @Override
   protected void mapAdditionalAttributes(ProviderEntity entity) {
     if (this.getCrops() != null) {
       entity.setCrops(
           this.getCrops().stream().map(v -> v.toString()).collect(Collectors.joining("|||")));
+    }
+    if (this.getWorkActivities() != null) {
+      entity.setWorkActivities(this.getWorkActivities().stream().map(v -> v.toString())
+          .collect(Collectors.joining("|||")));
     }
     entity.setAddress(this.getAddress().toEntity(entity.getAddress()));
   }

@@ -4,7 +4,7 @@ import java.util.Date;
 import javax.json.bind.annotation.JsonbDateFormat;
 import de.solid.backend.dao.InquiryEntity;
 import de.solid.backend.rest.model.BaseResponseModel;
-import de.solid.backend.rest.model.provider.ProviderResponseModel;
+import de.solid.backend.rest.model.provider.PublicProviderResponseModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,7 +20,7 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
 
   private long inquiryId;
 
-  private ProviderResponseModel provider;
+  private PublicProviderResponseModel provider;
 
   @JsonbDateFormat(value = RESPONSE_DATE_FORMAT)
   private Date applyDate;
@@ -31,6 +31,6 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
   protected void mapAdditionalAttributes(InquiryResponseModel model, InquiryEntity entity) {
     model.setInquiryId(entity.getT_id());
     model.setApplyDate(entity.getT_dateCreated());
-    model.setProvider(new ProviderResponseModel().fromEntity(entity.getProvider()));
+    model.setProvider(new PublicProviderResponseModel().fromEntity(entity.getProvider()));
   }
 }

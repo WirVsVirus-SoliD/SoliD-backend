@@ -73,7 +73,7 @@ public class GeocodeProcessor {
       } else {
         entity.setLatitude(geocodeCallResult.getLatt());
         entity.setLongitude(geocodeCallResult.getLongt());
-        _log.info("Successfully resolved address for provider with id {} from geojson",
+        _log.info("Successfully resolved address for provider with id {} from geocode",
             entity.getT_id());
         return true;
       }
