@@ -2,7 +2,7 @@ variables:
   devops_rootdir: /opt/solid
   devops_dir: $(devops_rootdir)/backend
   backend_dir: /opt/backend/backend-$(Build.SourceBranchName)
-  backend_rooturl: solid-backend.13-69-48-151.nip.io
+  backend_rooturl: backend.solid.wirackern.de
   env_file: .env
 
 trigger:
@@ -96,7 +96,7 @@ stages:
                 sudo mkdir -p $(backend_dir)
                 sudo rsync -av $(devops_dir)/ $(backend_dir)/
                 cd $(backend_dir)
-                sudo sed -i -e "s/BACKEND_VIRTUAL_HOST.*$/BACKEND_VIRTUAL_HOST=$(Build.SourceBranchName).$(backend_rooturl)/" $(env_file)
+                if [ '$(Build.SourceBranchName)' != 'master' ]; then NEW_HOSTNAME=$(Build.SourceBranchName).$(backend_rooturl); else NEW_HOSTNAME=$(backend_rooturl); fi; sudo sed -i -e "s/BACKEND_VIRTUAL_HOST.*$/BACKEND_VIRTUAL_HOST=$NEW_HOSTNAME/" $(env_file)
                 sudo sed -i -e "s/BACKEND_BRANCH.*$/BACKEND_BRANCH=$(Build.SourceBranchName)/" $(env_file)
                 sudo docker-compose down
                 sudo docker-compose pull --parallel
