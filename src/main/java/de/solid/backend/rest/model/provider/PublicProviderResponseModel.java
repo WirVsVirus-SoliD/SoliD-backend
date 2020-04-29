@@ -3,6 +3,7 @@ package de.solid.backend.rest.model.provider;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.json.bind.annotation.JsonbNillable;
 import de.solid.backend.common.Crops;
 import de.solid.backend.dao.ProviderEntity;
 import de.solid.backend.rest.model.AddressResponseModel;
@@ -18,6 +19,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonbNillable(value = true)
 public class PublicProviderResponseModel
     extends BaseResponseModel<PublicProviderResponseModel, ProviderEntity> {
 
@@ -35,11 +37,7 @@ public class PublicProviderResponseModel
 
   private Float hourlyRate;
 
-  private Boolean pickupPossible;
-
   private Integer pickupRange;
-
-  private Boolean overnightPossible;
 
   private Double latitude;
 
@@ -58,6 +56,8 @@ public class PublicProviderResponseModel
   private String otherInformation;
 
   private Float overnightPrice;
+
+  private Boolean bio;
 
   private List<String> workActivities;
 

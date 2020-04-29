@@ -49,6 +49,7 @@ public class InquiriesController extends BaseController {
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @APIResponses(value = {
       @APIResponse(responseCode = "200",
           description = "successfully inquired user for given helper, return model",

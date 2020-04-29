@@ -39,11 +39,7 @@ public class ProviderEntity extends AbstractEntity {
 
   private Float hourlyRate;
 
-  private Boolean pickupPossible;
-
   private Integer pickupRange;
-
-  private Boolean overnightPossible;
 
   private Double latitude;
 
@@ -62,6 +58,8 @@ public class ProviderEntity extends AbstractEntity {
   private Float overnightPrice;
 
   private String workActivities;
+
+  private Boolean bio;
 
   @OneToOne(cascade = CascadeType.ALL)
   private AddressEntity address;

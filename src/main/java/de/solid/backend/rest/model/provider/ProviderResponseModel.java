@@ -1,5 +1,6 @@
 package de.solid.backend.rest.model.provider;
 
+import javax.json.bind.annotation.JsonbNillable;
 import de.solid.backend.dao.ProviderEntity;
 import de.solid.backend.rest.model.AccountResponseModel;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonbNillable(value = true)
 public class ProviderResponseModel extends PublicProviderResponseModel {
 
   private AccountResponseModel account;

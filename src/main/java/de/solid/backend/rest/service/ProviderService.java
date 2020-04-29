@@ -22,6 +22,7 @@ import de.solid.backend.rest.model.provider.GeoJsonResponseModel;
 import de.solid.backend.rest.model.provider.InquiryResponseModel;
 import de.solid.backend.rest.model.provider.ProviderRequestModel;
 import de.solid.backend.rest.model.provider.ProviderResponseModel;
+import de.solid.backend.rest.model.provider.PublicProviderResponseModel;
 import de.solid.backend.rest.service.exception.NoSuchEntityException;
 import io.quarkus.mailer.MailTemplate;
 import io.vertx.mutiny.core.eventbus.EventBus;
@@ -153,6 +154,16 @@ public class ProviderService {
 
   public boolean providerExistsForEmail(String email) {
     return this.providersRepository.findByEmail(email) != null;
+  }
+
+  public PublicProviderResponseModel getProviderById(long providerId) {
+    ProviderEntity provider = this.providersRepository.findById(providerId);
+    if (provider != null) {
+      return new PublicProviderResponseModel().fromEntity(provider);
+    } else {
+      throw new NoSuchEntityException(this.getClass(), "getProviderById",
+          String.format("No provider exists with providerId %s", providerId));
+    }
   }
 
   private long getProviderIdByEmail(String authenticatedUserEmail) {

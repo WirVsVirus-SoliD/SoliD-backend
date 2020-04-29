@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -93,5 +94,21 @@ public class ProvidersController extends BaseController {
     _log.info("getProvidersInRange was called with lat {}, long {} and radius {}", latitude,
         longitude, radius);
     return HTTP_OK(this.providerService.getProvidersInRange(latitude, longitude, radius));
+  }
+
+  @Operation(description = "get provider for given providerId")
+  @GET
+  @Path("/{providerId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @PermitAll
+  @APIResponses(value = {
+      @APIResponse(responseCode = "200", description = "public model of provider",
+          content = @Content(mediaType = MediaType.APPLICATION_JSON,
+              schema = @Schema(implementation = GeoJsonResponseModel.class))),
+      @APIResponse(responseCode = "404",
+          description = "provider with given providerId does not exist")})
+  public Response getProvider(@PathParam("providerId") long providerId) {
+    _log.info("getProvider was called with providerId {}", providerId);
+    return HTTP_OK(this.providerService.getProviderById(providerId));
   }
 }

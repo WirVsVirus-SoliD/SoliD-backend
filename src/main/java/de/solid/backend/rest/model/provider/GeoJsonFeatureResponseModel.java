@@ -2,6 +2,7 @@ package de.solid.backend.rest.model.provider;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.json.bind.annotation.JsonbNillable;
 import de.solid.backend.dao.ProviderEntity;
 import de.solid.backend.rest.model.BaseResponseModel;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonbNillable(value = true)
 public class GeoJsonFeatureResponseModel
     extends BaseResponseModel<GeoJsonFeatureResponseModel, ProviderEntity> {
 

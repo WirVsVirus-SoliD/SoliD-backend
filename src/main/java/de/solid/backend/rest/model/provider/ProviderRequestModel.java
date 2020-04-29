@@ -54,6 +54,8 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
 
   private List<String> workActivities;
 
+  private Boolean bio;
+
   @Override
   protected void mapAdditionalAttributes(ProviderEntity entity) {
     if (this.getCrops() != null) {
