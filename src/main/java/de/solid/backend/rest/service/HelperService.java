@@ -54,8 +54,14 @@ public class HelperService {
   @Inject
   private MailTemplate helperActivationMail;
 
+  @Inject
+  private MailTemplate helperInquiredMail;
+
   @ConfigProperty(name = "ticket.activation.url")
   private String ticketActivationUrl;
+
+  @ConfigProperty(name = "provider.dashboard.url")
+  private String providerDashboardUrl;
 
   @Transactional
   public void registerHelper(HelperRequestModel model) {
@@ -139,6 +145,10 @@ public class HelperService {
         entity.setHelper(helperEntity);
         entity.setProvider(providerEntity);
         this.inquiriesRepository.persist(entity);
+        this.helperInquiredMail.to(providerEntity.getAccount().getEmail())
+            .subject("soliD - neuer Helfer registriert")
+            .data("firstName", providerEntity.getAccount().getFirstName())
+            .data("dashboardUrl", providerDashboardUrl).send();
         return new InquiryResponseModel().fromEntity(entity);
       } else {
         throw new DuplicateException(this.getClass(), "inquireForProvider",

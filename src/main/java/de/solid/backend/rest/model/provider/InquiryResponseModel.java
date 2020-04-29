@@ -2,6 +2,7 @@ package de.solid.backend.rest.model.provider;
 
 import java.util.Date;
 import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbNillable;
 import de.solid.backend.dao.InquiryEntity;
 import de.solid.backend.rest.model.BaseResponseModel;
 import de.solid.backend.rest.model.helper.HelperResponseModel;
@@ -16,6 +17,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonbNillable(value = true)
 public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel, InquiryEntity> {
 
   private long inquiryId;

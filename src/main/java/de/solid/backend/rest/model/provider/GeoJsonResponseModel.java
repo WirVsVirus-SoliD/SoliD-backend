@@ -3,6 +3,7 @@ package de.solid.backend.rest.model.provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.json.bind.annotation.JsonbNillable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @Setter
 @RequiredArgsConstructor
 @ToString
+@JsonbNillable(value = true)
 public class GeoJsonResponseModel {
 
   private String type = "FeatureCollection";

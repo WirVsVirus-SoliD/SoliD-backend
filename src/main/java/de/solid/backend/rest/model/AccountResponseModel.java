@@ -1,5 +1,6 @@
 package de.solid.backend.rest.model;
 
+import javax.json.bind.annotation.JsonbNillable;
 import de.solid.backend.dao.AccountEntity;
 import io.reactivex.annotations.NonNull;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonbNillable(value = true)
 public class AccountResponseModel extends BaseResponseModel<AccountResponseModel, AccountEntity> {
 
   private long accountId;

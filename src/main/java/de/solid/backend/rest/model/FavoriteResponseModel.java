@@ -2,6 +2,7 @@ package de.solid.backend.rest.model;
 
 import java.util.Date;
 import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbNillable;
 import de.solid.backend.dao.FavoriteEntity;
 import de.solid.backend.rest.model.provider.PublicProviderResponseModel;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonbNillable(value = true)
 public class FavoriteResponseModel
     extends BaseResponseModel<FavoriteResponseModel, FavoriteEntity> {
 

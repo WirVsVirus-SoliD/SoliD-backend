@@ -1,5 +1,6 @@
 package de.solid.backend.rest.model.auth;
 
+import javax.json.bind.annotation.JsonbNillable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonbNillable(value = true)
 public class JWTResponseModel {
 
   private String accessToken;
