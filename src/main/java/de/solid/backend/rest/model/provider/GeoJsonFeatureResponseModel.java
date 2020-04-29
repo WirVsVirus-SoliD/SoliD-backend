@@ -40,6 +40,6 @@ public class GeoJsonFeatureResponseModel
   @Override
   protected void mapAdditionalAttributes(GeoJsonFeatureResponseModel model, ProviderEntity entity) {
     model.setProperties(new PublicProviderResponseModel().fromEntity(entity));
-    model.setGeometry(new Geometry(Arrays.asList(entity.getLongitude(), entity.getLatitude())));
+    model.setGeometry(new Geometry(Arrays.asList(entity.getLatitude(), entity.getLongitude())));
   }
 }
