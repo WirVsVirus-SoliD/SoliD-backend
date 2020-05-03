@@ -1,18 +1,22 @@
-# Use an official OpenJDK runtime as a parent image
+FROM maven:3-openjdk-11 AS builder
+
+ARG repo_url="https://github.com/WirVsVirus-SoliD/SoliD-backend.git"
+ARG rootdir=/app
+ARG branch=master
+
+RUN \
+    git clone ${repo_url} ${rootdir} && \
+    cd ${rootdir} && \
+    for remote in `git branch -r`; do git branch --track ${remote#origin/} $remote; done ; \
+    git checkout ${branch} && \
+    mvn package
+
 FROM openjdk:11-jre-slim-buster
 
-ARG branch=master
+ARG jar_file=/app/target/solid-backend.jar
 
 WORKDIR /app
 
-ARG github_api_link="https://api.github.com/repos/WirVsVirus-SoliD/SoliD-backend/releases/tags/${branch}"
+COPY --from=builder ${jar_file} ./app.jar
 
-# set shell to bash
-# source: https://stackoverflow.com/a/40944512/3128926
-RUN apt update && apt install -y bash curl jq
-
-# Copy the fat jar into the container at /app
-RUN curl -L -o app.jar $(curl --silent ${github_api_link} | jq -r '.assets[0].browser_download_url')
-
-# Run jar file when the container launches
 CMD ["java", "-jar", "app.jar"]
