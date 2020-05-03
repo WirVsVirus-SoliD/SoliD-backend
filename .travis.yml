@@ -1,0 +1,53 @@
+os: linux
+dist: bionic
+language: minimal
+services:
+  - docker
+
+env:
+  global:
+  - REMOTE_SERVER=solid-contabo.malkos.de
+  - SSH_KEY=travis_solid_deploy_key
+  - REPO_URL=https://github.com/WirVsVirus-SoliD/SoliD-backend
+  - DEVOPS_ROOTDIR=/opt/solid
+  - USER=root
+  - DEVOPS_DIR=${DEVOPS_ROOTDIR}/backend
+  - BACKEND_DIR=/opt/backend/backend-${TRAVIS_BRANCH}
+  - BACKEND_ROOTURL=backend.solid.wirackern.de
+  - ENV_FILE=.env
+  - secure: U6YvJmhSkXzT3DbzB/f88hUw5+Dps4D1A4EOMCgSFIHgWSnNniM+rd/Eqd7upfMxvanAMdm8SQEEhKI7RdN7KvuD4uxBmcp1xTkwQbCdiVyz0kWP4SF6aw5y/BkBaMkM5Bl4r/v2e635MI0spDm4vcFrZBdsnqFDF2o/7Xn9b4N8MSvIt0NyXS7gaKQw8MKL3PUlLC9/UlLDuJSZ+BbOq2wYaF4d86AylztQEA4Ub29cbOxlDAaSwZ1ZuXmpyErhjmd5+C6I7NZnyoXQM3CoF8bcHj1wwuu8nH6A5+HksjMf44z4xSPW6pq4VE+gTqEk0ZlH7ozeVJO2JKpuuIuTP49hcJHWJMt/7A+qkYKxpzEG6PsvFVamsbGV91p9mgIBBQxsxVm8o1mQXPjjt2tFaIIFACvRol1tn11bktgvraJTHCZHNnCdZxZqmiJmHlqMD02w8Uv/iJeF6o3SwfUiPnrbLKi4jV73xKxfqH/FDpiVmyKgJVFV0AMO+IWD3W8HYEbOH+YX34jEIbjAgLRyS1gw+NTWbGlphU67a9c193v0vRg3R2ILzICNB6QLn0TYH7Q78e5x9jcO81UQfE+n2p5cocBQqITF3/hHkoui7QB49UsajQcsJ8AzZTQzKP27h3RnydfXdtztGUuX0QMA13TJ9AliEPmDOrslEvtFnKw=
+  - secure: D1hBtQ1Ylx5IzkdBSFv5VHlkzsh/nTyxwns+0g5gRtx7y66vpugcSAINgOQh9YM4UsRApoBwRsQE/C9mgFGBMUhlXk1LaomhH3XJhqZRMjzWHGC0wE7LRSk+lYDvtZ4mDJ5r0VeBl+LfF9kosr/FVdlKUtaNVSwJvkWU/QhUPBeBvKd9o/s84j03MuUhXDdv4vkA6xHFugCzE1mGw/csuYOU3Y/SLarTERkkDcuE90HdgpAxGS9FkDw3yQ+v8iBfCE6TWJemOANkP/GwbD7bF7lV00d+B0pEibc/Xno5i4A9zS9RtfZB+IetjJPDO4M3+TqwZrGg1VcyzjYn4p42aQinqy+g8FMeuMfxo7TJn0nhvUw5VnD/W/EEd5aueM5Rlqq0T3r1fvEpXDiz5Go7u4TLi7rfYsjuWeMUwhp6owA/rPgAjjXOd0l0p6jum/Nk8qhusN/gZ4Z+wMEsDJOVzY/fp8DNOtbjIeNHzLjQkEtPbsxuYEd9NnQnSSCc8EIuQsMbR2FduBus0XAoz21WFVF83KZ2I5eXgqPwrwvfG7zJILIuSDXkBKr34th+PhlFdsYZj7Wi80DYXOCyYwJs+JMvM4rTGPAJetTepmu7DQQaugXxavn5CpUP/IJiU15Hc7Pircvmz1eQsnQFTW0RannP6P2aCsulYC8nru0AOeU=
+
+branches:
+  only:
+  - master
+  - quarkus
+  - travis
+before_install:
+- openssl aes-256-cbc -K $encrypted_3c4ae5278ddb_key -iv $encrypted_3c4ae5278ddb_iv
+  -in travis_solid_deploy_key.enc -out travis_solid_deploy_key -d
+- eval "$(ssh-agent -s)"
+- chmod 600 ./${SSH_KEY}
+- ssh-keyscan -H ${REMOTE_SERVER} >> ~/.ssh/known_hosts
+- ssh-add ./${SSH_KEY}
+- ssh ${USER}@${REMOTE_SERVER} pwd
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+install: 
+  - docker build --no-cache -t wirvsvirussolid/solid:backend-${TRAVIS_BRANCH} --build-arg branch=${TRAVIS_BRANCH} .
+
+script:
+  - docker push wirvsvirussolid/solid:backend-${TRAVIS_BRANCH}
+  - |
+    ssh ${USER}@${REMOTE_SERVER} "
+            mkdir -p ${BACKEND_DIR};
+            rsync -av ${DEVOPS_DIR}/ ${BACKEND_DIR}/;
+            cd ${BACKEND_DIR};
+            if [ '${TRAVIS_BRANCH}' != 'master' ]; then NEW_HOSTNAME=${TRAVIS_BRANCH}.${BACKEND_ROOTURL}; else NEW_HOSTNAME=${BACKEND_ROOTURL}; fi; 
+            echo \$NEW_HOSTNAME
+            sed -i -e \"s/BACKEND_VIRTUAL_HOST.*\$/BACKEND_VIRTUAL_HOST=\$NEW_HOSTNAME/\" ${ENV_FILE};
+            sed -i -e \"s/BACKEND_BRANCH.*\$/BACKEND_BRANCH=${TRAVIS_BRANCH}/\" ${ENV_FILE};
+            docker-compose down;
+            docker-compose pull --parallel;
+            docker-compose up -d;
+    "
