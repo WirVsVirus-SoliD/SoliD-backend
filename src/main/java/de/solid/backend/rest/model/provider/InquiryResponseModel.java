@@ -36,6 +36,8 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
     model.setInquiryId(entity.getT_id());
     model.setApplyDate(entity.getT_dateCreated());
     model.setContactedDate(entity.getT_dateChanged());
-    model.setHelper(new HelperResponseModel().fromEntity(entity.getHelper()));
+    if (entity.getHelper() != null) {
+      model.setHelper(new HelperResponseModel().fromEntity(entity.getHelper()));
+    }
   }
 }

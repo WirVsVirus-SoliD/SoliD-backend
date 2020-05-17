@@ -33,6 +33,8 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
   protected void mapAdditionalAttributes(InquiryResponseModel model, InquiryEntity entity) {
     model.setInquiryId(entity.getT_id());
     model.setApplyDate(entity.getT_dateCreated());
-    model.setProvider(new PublicProviderResponseModel().fromEntity(entity.getProvider()));
+    if (entity.getProvider() != null) {
+      model.setProvider(new PublicProviderResponseModel().fromEntity(entity.getProvider()));
+    }
   }
 }

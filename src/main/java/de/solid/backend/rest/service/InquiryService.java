@@ -26,7 +26,7 @@ public class InquiryService {
 
   public void removeInquiry(long inquiryId, String authenticatedUserEmail) {
     if (this.helperService.helperExistsForEmail(authenticatedUserEmail)) {
-      this.providerService.removeFromInquiry(inquiryId, authenticatedUserEmail);
+      this.helperService.removeFromInquiry(inquiryId, authenticatedUserEmail);
     } else if (this.providerService.providerExistsForEmail(authenticatedUserEmail)) {
       this.providerService.removeFromInquiry(inquiryId, authenticatedUserEmail);
     } else {
