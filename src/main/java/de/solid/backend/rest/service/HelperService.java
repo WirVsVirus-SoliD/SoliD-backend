@@ -109,19 +109,24 @@ public class HelperService {
   }
 
   @Transactional
-  public void removeFromInquiry(long providerId, String authenticatedUserEmail) {
-    long helperEntityId = getHelperByEmail(authenticatedUserEmail).getT_id();
-    InquiryEntity entity =
-        this.inquiriesRepository.findByHelperAndProvider(helperEntityId, providerId);
+  public void removeFromInquiry(long inquiryId, String authenticatedUserEmail) {
+    InquiryEntity entity = this.inquiriesRepository.findById(inquiryId);
     if (entity != null) {
-      if (entity.getHelper().getT_id() == helperEntityId) {
-        entity.setHelper(null);
-        this.inquiriesRepository.persist(entity);
+      long helperEntityId = getHelperByEmail(authenticatedUserEmail).getT_id();
+      if (entity.getHelper() != null) {
+        if (entity.getHelper().getT_id() == helperEntityId) {
+          entity.setHelper(null);
+          this.inquiriesRepository.persist(entity);
+        }
+      } else {
+        throw new NoSuchEntityException(this.getClass(), "removeFromInquiry",
+            String.format("inquiry with id %s already removed for helper with email %s", inquiryId,
+                authenticatedUserEmail));
       }
     } else {
       throw new NoSuchEntityException(this.getClass(), "removeFromInquiry",
-          String.format("no inquiry exists for helper with email %s and provider with id %s",
-              authenticatedUserEmail, providerId));
+          String.format("no inquiry exists with id %s for helper with email %s", inquiryId,
+              authenticatedUserEmail));
     }
   }
 

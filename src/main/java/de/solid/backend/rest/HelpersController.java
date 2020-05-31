@@ -64,7 +64,7 @@ public class HelpersController extends BaseController {
       @APIResponse(responseCode = "409", description = "email to update already exists")})
   public Response updateHelper(
       @RequestBody(description = "the helper model to save") HelperRequestModel model) {
-    _log.info("updateHelper was called for provider with email {}", getAuthenticatedUserEmail());
+    _log.info("updateHelper was called for helper with email {}", getAuthenticatedUserEmail());
     return HTTP_OK(this.helperService.updateHelper(model, getAuthenticatedUserEmail()));
   }
 

@@ -107,6 +107,7 @@ public class ProviderService {
         .collect(Collectors.toList());
   }
 
+  @Transactional
   public void toggleHelperContacted(long inquiryId, String authenticatedUserEmail) {
     InquiryEntity entity = this.inquiriesRepository.findById(inquiryId);
     if (entity != null) {
@@ -121,13 +122,20 @@ public class ProviderService {
     }
   }
 
+  @Transactional
   public void removeFromInquiry(long inquiryId, String authenticatedUserEmail) {
     InquiryEntity entity = this.inquiriesRepository.findById(inquiryId);
     if (entity != null) {
       long providerEntityId = getProviderIdByEmail(authenticatedUserEmail);
-      if (entity.getProvider().getT_id() == providerEntityId) {
-        entity.setProvider(null);
-        this.inquiriesRepository.persist(entity);
+      if (entity.getProvider() != null) {
+        if (entity.getProvider().getT_id() == providerEntityId) {
+          entity.setProvider(null);
+          this.inquiriesRepository.persist(entity);
+        }
+      } else {
+        throw new NoSuchEntityException(this.getClass(), "removeFromInquiry",
+            String.format("inquiry with id %s already removed for provider with email %s",
+                inquiryId, authenticatedUserEmail));
       }
     } else {
       throw new NoSuchEntityException(this.getClass(), "removeFromInquiry",

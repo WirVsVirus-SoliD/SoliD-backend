@@ -21,10 +21,6 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private long helperId;
 
-  private String firstName;
-
-  private String lastName;
-
   private String mobileNumber;
 
   private String email;

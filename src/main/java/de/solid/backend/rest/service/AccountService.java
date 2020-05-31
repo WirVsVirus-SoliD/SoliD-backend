@@ -48,18 +48,20 @@ public class AccountService {
   }
 
   public AccountEntity updateAccount(AccountRequestModel model, String authenticatedUserEmail) {
-    if (model.getEmail() != null) {
-      this.checkEmailValid(model.getEmail());
-      model.setEmail(model.getEmail().toLowerCase());
-      this.checkForExistingEmail(model.getEmail());
-    } else {
-      model.setEmail(authenticatedUserEmail);
-    }
     AccountEntity entity = this.findByEmail(authenticatedUserEmail);
-    entity = model.toEntity(entity);
-    this.accountRepository.persist(entity);
-    this.keycloakService.updateUser(entity.getKeycloakUserId(), model.getFirstName(),
-        model.getLastName(), model.getEmail(), model.getPassword());
+    if (model != null) {
+      if (model.getEmail() != null) {
+        this.checkEmailValid(model.getEmail());
+        model.setEmail(model.getEmail().toLowerCase());
+        this.checkForExistingEmail(model.getEmail());
+      } else {
+        model.setEmail(authenticatedUserEmail);
+      }
+      entity = model.toEntity(entity);
+      this.accountRepository.persist(entity);
+      this.keycloakService.updateUser(entity.getKeycloakUserId(), model.getFirstName(),
+          model.getLastName(), model.getEmail(), model.getPassword());
+    }
     return entity;
   }
 
