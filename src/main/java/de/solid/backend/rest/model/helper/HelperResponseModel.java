@@ -31,8 +31,6 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private Boolean partTime;
 
-  private Integer pickupRange;
-
   private Boolean driverLicense;
 
   private Boolean pickupRequired;

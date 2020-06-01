@@ -29,6 +29,7 @@ public class InquiryResponseModel extends BaseResponseModel<InquiryResponseModel
 
   private boolean contacted;
 
+  @JsonbDateFormat(value = RESPONSE_DATE_FORMAT)
   private Date contactedDate;
 
   @Override
