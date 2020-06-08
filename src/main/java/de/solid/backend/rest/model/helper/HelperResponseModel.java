@@ -21,10 +21,6 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private long helperId;
 
-  private String mobileNumber;
-
-  private String email;
-
   private EmploymentStatus EmploymentStatus;
 
   private Boolean fullTime;
