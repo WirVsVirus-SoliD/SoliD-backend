@@ -14,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 public class KeycloakUserRequestModel {
 
   private boolean enabled;
