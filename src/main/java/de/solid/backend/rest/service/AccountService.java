@@ -50,10 +50,9 @@ public class AccountService {
   public AccountEntity updateAccount(AccountRequestModel model, String authenticatedUserEmail) {
     AccountEntity entity = this.findByEmail(authenticatedUserEmail);
     if (model != null) {
-      if (model.getEmail() != null) {
+      if (this.stringIsDifferent(model.getEmail(), authenticatedUserEmail)) {
         this.checkEmailValid(model.getEmail());
         model.setEmail(model.getEmail().toLowerCase());
-        this.checkForExistingEmail(model.getEmail());
       } else {
         model.setEmail(authenticatedUserEmail);
       }
@@ -112,5 +111,15 @@ public class AccountService {
     }
     throw new NoSuchEntityException(this.getClass(), "findByEmail",
         String.format("called with non existing email %s", email));
+  }
+
+  private boolean stringIsDifferent(String valueA, String valueB) {
+    if (valueA != null && valueB != null) {
+      if (valueA.toLowerCase().trim().equals(valueB.toLowerCase().trim())) {
+        return false;
+      }
+      return true;
+    }
+    return false;
   }
 }
