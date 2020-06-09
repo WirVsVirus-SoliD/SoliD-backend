@@ -1,7 +1,6 @@
 package de.solid.backend.rest.model.helper;
 
 import javax.json.bind.annotation.JsonbNillable;
-import de.solid.backend.common.EmploymentStatus;
 import de.solid.backend.dao.HelperEntity;
 import de.solid.backend.rest.model.AccountResponseModel;
 import de.solid.backend.rest.model.BaseResponseModel;
@@ -21,7 +20,7 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
 
   private long helperId;
 
-  private EmploymentStatus EmploymentStatus;
+  private String EmploymentStatus;
 
   private Boolean fullTime;
 
@@ -39,5 +38,6 @@ public class HelperResponseModel extends BaseResponseModel<HelperResponseModel, 
   protected void mapAdditionalAttributes(HelperResponseModel model, HelperEntity entity) {
     model.setHelperId(entity.getT_id());
     model.setAccount(new AccountResponseModel().fromEntity(entity.getAccount()));
+    model.setEmploymentStatus(entity.getEmploymentStatus().getLabel());
   }
 }

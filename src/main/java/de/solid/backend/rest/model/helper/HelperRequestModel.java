@@ -18,7 +18,7 @@ import lombok.ToString;
 @ToString
 public class HelperRequestModel extends BaseRequestModel<HelperRequestModel, HelperEntity> {
 
-  private EmploymentStatus employmentStatus;
+  private String employmentStatus;
 
   private Boolean fullTime;
 
@@ -38,5 +38,7 @@ public class HelperRequestModel extends BaseRequestModel<HelperRequestModel, Hel
   private Long visitedProvider;
 
   @Override
-  protected void mapAdditionalAttributes(HelperEntity entity) {}
+  protected void mapAdditionalAttributes(HelperEntity entity) {
+    entity.setEmploymentStatus(EmploymentStatus.fromString(employmentStatus));
+  }
 }

@@ -34,7 +34,7 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
 
   private boolean pickupPossible;
 
-  private int pickupRange;
+  private Integer pickupRange;
 
   private boolean overnightPossible;
 
