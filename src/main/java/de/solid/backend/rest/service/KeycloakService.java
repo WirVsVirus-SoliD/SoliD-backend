@@ -130,7 +130,7 @@ public class KeycloakService {
   public void updateUser(String keycloakUserId, String firstName, String lastName, String email,
       String password) {
     KeycloakUserRequestModel model = KeycloakUserRequestModel.builder().email(email)
-        .firstName(firstName).lastName(lastName).build();
+        .firstName(firstName).lastName(lastName).enabled(true).emailVerified(true).build();
     if (password != null) {
       model = model.toBuilder().credentials(Arrays.asList(new Credentials(password))).build();
     }
