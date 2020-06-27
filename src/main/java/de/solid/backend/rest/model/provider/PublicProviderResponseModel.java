@@ -25,6 +25,8 @@ public class PublicProviderResponseModel
 
   private long providerId;
 
+  private long accountId;
+
   private String farmName;
 
   private List<Crops> crops;
@@ -74,5 +76,6 @@ public class PublicProviderResponseModel
       model.setWorkActivities(Arrays.asList(entity.getWorkActivities().split("\\|\\|\\|")));
     }
     model.setProviderId(entity.getT_id());
+    model.setAccountId(entity.getAccount().getT_id());
   }
 }
