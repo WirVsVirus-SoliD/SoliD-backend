@@ -30,13 +30,13 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
 
   private String minWorkPeriod;
 
-  private float hourlyRate;
+  private Float hourlyRate;
 
-  private boolean pickupPossible;
+  private Boolean pickupPossible;
 
   private Integer pickupRange;
 
-  private boolean overnightPossible;
+  private Boolean overnightPossible;
 
   private AccountRequestModel account;
 
@@ -50,7 +50,7 @@ public class ProviderRequestModel extends BaseRequestModel<ProviderRequestModel,
 
   private String otherInformation;
 
-  private float overnightPrice;
+  private Float overnightPrice;
 
   private List<String> workActivities;
 
